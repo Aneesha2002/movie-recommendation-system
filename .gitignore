@@ -1,0 +1,55 @@
+# ----------------------
+# Python
+# ----------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ----------------------
+# Virtual Environment
+# ----------------------
+venv/
+movie_recommend_venv/
+env/
+
+# ----------------------
+# Environment Variables
+# ----------------------
+.env
+
+# ----------------------
+# Django
+# ----------------------
+*.log
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# ----------------------
+# Django migrations cache
+# ----------------------
+*.pyc
+
+# ----------------------
+# VS Code
+# ----------------------
+.vscode/
+
+# ----------------------
+# OS files
+# ----------------------
+.DS_Store
+Thumbs.db
+
+# ----------------------
+# Python packaging
+# ----------------------
+build/
+dist/
+*.egg-info/
+
+# ----------------------
+# Docker
+# ----------------------
+*.pid
+*.seed
