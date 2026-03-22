@@ -1,0 +1,13 @@
+<div *ngIf="loading">
+  <p>Loading movies...</p>
+</div>
+
+<div *ngIf="!loading && movies.length === 0">
+  <p>No movies found</p>
+</div>
+
+<div *ngIf="movies.length > 0">
+  <div *ngFor="let movie of movies">
+    <h3>{{ movie.title }}</h3>
+  </div>
+</div>
