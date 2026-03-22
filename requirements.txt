@@ -12,3 +12,4 @@ typing_extensions==4.15.0
 tzdata==2025.3
 django-cors-headers
 Pillow>=10.0.0
+djangorestframework-simplejwt
