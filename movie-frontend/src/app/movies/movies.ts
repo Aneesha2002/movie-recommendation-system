@@ -1,106 +1,173 @@
 // src/app/movies/movies.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../services/api.service';
-import { ChangeDetectorRef } from '@angular/core';
+import { Subject, debounceTime } from 'rxjs';
+
+interface Genre { id: number; name: string; }
+interface Movie {
+  id: number;
+  title: string;
+  description: string;
+  release_year: number;
+  genres: Genre[];
+  poster_url: string;
+  avg_rating: number;
+  your_rating?: number;       
+  recommendations?: Movie[];
+}
 
 @Component({
   selector: 'app-movies',
   standalone: true,
   imports: [CommonModule],
   template: `
-    <h2>🔥 Trending</h2>
-<div *ngIf="trending && trending.length > 0; else noTrending" class="trending-container">
-  <div *ngFor="let movie of trending" class="trending-card">
-    <div class="movie-info">
-      <h3>{{ movie.title }}</h3>
-     <p>Rating: {{ movie.avg_rating || 0 }}</p>
+<input type="text" placeholder="Search movies..." (input)="onSearch($event)" class="search-box" />
+
+<h2>🔥 Trending</h2>
+<div *ngIf="trending.length > 0; else noTrending" class="trending-container">
+  <div *ngFor="let movie of trending" class="movie-card">
+    <img [src]="getPoster(movie)" alt="{{ movie.title }}" />
+    <div class="hover-info">
+      <h4>{{ movie.title }}</h4>
+      <p>{{ movie.description }}</p>
+      <p>Year: {{ movie.release_year }}</p>
+      <p>Genres: {{ movie.genres.map(g => g.name).join(', ') }}</p>
+
+      <p>Average Rating: {{ movie.avg_rating || 0 }}</p>
+      <p>
+        Your Rating:
+        <span *ngFor="let star of [1,2,3,4,5]"
+              (click)="rateMovie(movie, star)"
+              [style.color]="star <= (movie?.your_rating ?? 0) ? 'gold' : 'gray'">★</span>
+      </p>
+
+      <div *ngIf="movie.recommendations?.length" class="recommendations">
+        <h5>Recommended:</h5>
+        <ul>
+          <li *ngFor="let rec of movie.recommendations">{{ rec.title }}</li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>
-<ng-template #noTrending>No trending movies available 😔</ng-template>
-<h2>🎬 Movies (Total: {{ movies?.length || 0 }})</h2>
-<div *ngIf="movies && movies.length > 0; else noMovies" class="movies-grid">
-  <div *ngFor="let movie of movies" class="movie-card">
-    
-    <h4>{{ movie.title }}</h4>
-    <p>Rating: {{ movie.avg_rating || 0 }}</p>
+<ng-template #noTrending>No trending movies available</ng-template>
+
+<h2>🎬 All Movies ({{ movies.length }})</h2>
+<div *ngIf="movies.length > 0; else noMovies" class="movies-grid">
+  <div *ngFor="let movie of movies; trackBy: trackById" class="movie-card">
+    <img [src]="getPoster(movie)" alt="{{ movie.title }}" />
+    <div class="hover-info">
+      <h4>{{ movie.title }}</h4>
+      <p>{{ movie.description }}</p>
+      <p>Year: {{ movie.release_year }}</p>
+      <p>Genres: {{ movie.genres.map(g => g.name).join(', ') }}</p>
+
+      <p>Average Rating: {{ movie.avg_rating || 0 }}</p>
+      <p>
+        Your Rating:
+        <span *ngFor="let star of [1,2,3,4,5]"
+              (click)="rateMovie(movie, star)"
+              [style.color]="star <= (movie?.your_rating ?? 0) ? 'gold' : 'gray'">★</span>
+      </p>
+
+      <div *ngIf="movie.recommendations?.length" class="recommendations">
+        <h5>Recommended:</h5>
+        <ul>
+          <li *ngFor="let rec of movie.recommendations">{{ rec.title }}</li>
+        </ul>
+      </div>
+    </div>
   </div>
 </div>
-<ng-template #noMovies>No movies available 😔</ng-template>
+<ng-template #noMovies>No movies available</ng-template>
   `,
   styles: [`
-    .trending-container {
-  display: flex;
-  overflow-x: auto;
-  gap: 1rem;
-  padding: 0.5rem 0;
-}
+.search-box { margin-bottom:1rem; padding:0.5rem; width:100%; max-width:400px; font-size:1rem; }
 
-.trending-card {
-  min-width: 150px;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #f0f0f0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  text-align: center;
-  flex-shrink: 0;
-}
-
-.trending-card img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
-
-.trending-card .movie-info {
-  padding: 0.5rem;
-}
-
-.movies-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.movie-card {
-  border-radius: 8px;
-  overflow: hidden;
-  background: #fafafa;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-  text-align: center;
-}
-
-.movie-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-}
+.movie-card { position: relative; width:200px; border-radius:8px; overflow:hidden; background:#f5f5f5; box-shadow:0 2px 6px rgba(0,0,0,0.15); text-align:center; cursor:pointer; transition: transform 0.2s, box-shadow 0.2s; }
+.movie-card:hover { transform:translateY(-5px); box-shadow:0 6px 12px rgba(0,0,0,0.25); }
+.movie-card img { width:100%; height:250px; object-fit:cover; }
+.hover-info { padding:0.5rem; font-size:0.9rem; text-align:left; min-height:220px; }
+.trending-container, .movies-grid { display:flex; gap:1rem; flex-wrap:wrap; justify-content:start; }
+.recommendations { margin-top:0.5rem; }
+.recommendations ul { padding-left:1rem; margin:0; max-height:70px; overflow-y:auto; }
   `]
 })
 export class MoviesComponent implements OnInit {
-  movies: any[] = [];
-  trending: any[] = [];
+  searchSubject = new Subject<string>();
+  movies: Movie[] = [];
+  allMovies: Movie[] = [];
+  trending: Movie[] = [];
 
-  
-constructor(private apiService: ApiService, private cdr: ChangeDetectorRef) {}
+  constructor(private apiService: ApiService, private cdr: ChangeDetectorRef) {}
 
-ngOnInit() {
-  this.apiService.getMovies().subscribe({
-    next: data => {
-      this.movies = Array.isArray(data) ? data : [];
-      this.cdr.detectChanges(); // force Angular to update view
-    },
-    error: err => console.error('MOVIES LOAD ERROR:', err)
-  });
+  ngOnInit() {
+    this.loadMovies();
+    this.loadTrending();
 
-  this.apiService.getTrending().subscribe({
-    next: data => {
-      this.trending = Array.isArray(data) ? data : [];
-      this.cdr.detectChanges(); // force Angular to update view
-    },
-    error: err => console.error('TRENDING LOAD ERROR:', err)
-  });
-}
+    this.searchSubject.pipe(debounceTime(300)).subscribe(query => {
+      const q = query?.toLowerCase() || '';
+      this.movies = q
+        ? this.allMovies.filter(m =>
+            m.title.toLowerCase().includes(q) ||
+            m.description.toLowerCase().includes(q) ||
+            m.genres.some(g => g.name.toLowerCase().includes(q))
+          )
+        : [...this.allMovies];
+      this.cdr.detectChanges();
+    });
+  }
+
+  loadMovies() {
+    this.apiService.getMovies().subscribe(data => {
+      if (Array.isArray(data)) {
+        this.allMovies = data.map((m: any) => ({
+          ...m,
+          your_rating: m.your_rating ?? 0,
+          recommendations: m.recommendations ?? []
+        }));
+        this.movies = [...this.allMovies];
+        this.cdr.detectChanges();
+      } else if ('error' in data) {
+        alert(data.error);
+      }
+    });
+  }
+
+  loadTrending() {
+    this.apiService.getTrending().subscribe(data => {
+      if (Array.isArray(data)) {
+        this.trending = data.map((m: any) => ({
+          ...m,
+          your_rating: m.your_rating ?? 0,
+          recommendations: m.recommendations ?? []
+        }));
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  onSearch(event: any) { this.searchSubject.next(event.target.value); }
+
+  getPoster(movie: Movie) {
+    return movie.poster_url?.trim() || 'https://via.placeholder.com/200x250?text=No+Poster';
+  }
+
+  trackById(index: number, movie: Movie) { return movie.id; }
+
+  rateMovie(movie: Movie, value: number) {
+    this.apiService.rateMovie(movie.id, value).subscribe({
+      next: (res: any) => {
+        if (!res.error) {
+          movie.avg_rating = res.avg_rating;
+          movie.your_rating = value;
+        }
+      },
+      error: (err) => {
+        console.error('Rating failed', err);
+        alert('Failed to submit rating. Are you logged in?');
+      }
+    });
+  }
 }

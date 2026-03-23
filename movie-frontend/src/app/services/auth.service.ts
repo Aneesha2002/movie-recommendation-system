@@ -29,9 +29,10 @@ getRefreshToken(): string | null {
   return localStorage.getItem('refresh_token');
 }
 
-  setToken(token: string) {
-    localStorage.setItem('token', token);
-  }
+
+setToken(token: string) {
+  localStorage.setItem('access_token', token); 
+}
 
   getToken(): string | null {
     return localStorage.getItem('token');

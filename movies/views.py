@@ -1,23 +1,76 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Avg
-from .models import Movie
-from .serializers import MovieSerializer
+from rest_framework.permissions import IsAuthenticated
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+from django.db.models import Q
+from .models import Movie, Rating
+from .serializers import MovieSerializer, RatingSerializer
 
-# List all movies (raw array, no pagination)
+# Movies list with search
+@method_decorator(cache_page(60 * 10), name='dispatch')
 class MovieListView(generics.ListAPIView):
-    queryset = Movie.objects.all()
     serializer_class = MovieSerializer
-    pagination_class = None  # return raw list for Angular
+    pagination_class = None
 
-# Get movie by ID
+    def get_queryset(self):
+        qs = Movie.objects.all()
+        query = self.request.query_params.get('search')
+        if query:
+            qs = qs.filter(
+                Q(title__icontains=query) |
+                Q(description__icontains=query) |
+                Q(genres__name__icontains=query)
+            ).distinct()
+        return qs
+
+    def get_serializer_context(self):
+        # Pass the request so your MovieSerializer can return your_rating correctly
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
+# Movie details
 class MovieDetailView(generics.RetrieveAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
 
+# Trending movies by average rating
+@method_decorator(cache_page(60 * 10), name='dispatch')
 class TrendingMoviesView(APIView):
     def get(self, request):
-        trending = Movie.objects.order_by('-rating')[:5]  # use existing rating field
-        serializer = MovieSerializer(trending, many=True)
+        trending = Movie.objects.order_by('-average_rating')[:5]
+        serializer = MovieSerializer(trending, many=True, context={'request': request})
         return Response(serializer.data)
+
+class SubmitRatingView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, movie_id):
+        try:
+            movie = Movie.objects.get(id=movie_id)
+        except Movie.DoesNotExist:
+            return Response({'error': 'Movie not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Accept 'rating' from frontend
+        try:
+            value = int(request.data.get('rating'))
+        except (TypeError, ValueError):
+            return Response({'error': 'Invalid rating value'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if value < 1 or value > 5:
+            return Response({'error': 'Rating must be 1-5'}, status=status.HTTP_400_BAD_REQUEST)
+
+        rating, created = Rating.objects.update_or_create(
+            user=request.user,
+            movie=movie,
+            defaults={'value': value}
+        )
+
+        movie.update_average_rating()
+
+        return Response({
+            'message': 'Rating submitted successfully',
+            'avg_rating': movie.average_rating
+        }, status=status.HTTP_200_OK)

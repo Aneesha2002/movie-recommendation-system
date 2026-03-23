@@ -1,0 +1,12 @@
+<form (submit)="onLogin($event)">
+  <div>
+    <label>Username:</label>
+    <input type="text" [(ngModel)]="loginData.username" name="username" required />
+  </div>
+  <div>
+    <label>Password:</label>
+    <input type="password" [(ngModel)]="loginData.password" name="password" required />
+  </div>
+  <button type="submit">Login</button>
+</form>
+<p>{{ message }}</p>

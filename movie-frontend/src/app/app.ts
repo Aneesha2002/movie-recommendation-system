@@ -12,7 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
   selector: 'app-root',
   standalone: true,
   imports: [
-    RouterModule, // only import RouterModule here
+    RouterModule, 
     RouterOutlet,
     SignupComponent,
     LoginComponent,
