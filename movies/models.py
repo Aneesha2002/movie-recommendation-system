@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Genre(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
@@ -18,13 +19,18 @@ class Movie(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     poster_url = models.URLField(max_length=500, blank=True, null=True)
 
+    # ✅ NEW FIELD (for 100% accurate TMDb mapping)
+    tmdb_id = models.IntegerField(null=True, blank=True)
+
     def __str__(self):
         return self.title
 
     def update_average_rating(self):
         ratings = self.ratings.all()
         if ratings.exists():
-            self.average_rating = round(sum(r.value for r in ratings) / ratings.count(), 2)
+            self.average_rating = round(
+                sum(r.value for r in ratings) / ratings.count(), 2
+            )
         else:
             self.average_rating = 0.0
         self.save()
@@ -32,14 +38,14 @@ class Movie(models.Model):
 
 class Rating(models.Model):
     user = models.ForeignKey(
-        User, 
-        on_delete=models.CASCADE, 
-        related_name='movie_ratings'  # <-- unique related_name to avoid clash
+        User,
+        on_delete=models.CASCADE,
+        related_name='movie_ratings'
     )
     movie = models.ForeignKey(
-        Movie, 
-        on_delete=models.CASCADE, 
-        related_name='ratings'  # keeps your existing movie->ratings relationship
+        Movie,
+        on_delete=models.CASCADE,
+        related_name='ratings'
     )
     value = models.PositiveSmallIntegerField()  # 1-5
     created_at = models.DateTimeField(auto_now_add=True)

@@ -34,13 +34,7 @@ interface Movie {
       <p>Year: {{ movie.release_year }}</p>
       <p>Genres: {{ movie.genres.map(g => g.name).join(', ') }}</p>
 
-      <p>Average Rating: {{ movie.avg_rating || 0 }}</p>
-      <p>
-        Your Rating:
-        <span *ngFor="let star of [1,2,3,4,5]"
-              (click)="rateMovie(movie, star)"
-              [style.color]="star <= (movie?.your_rating ?? 0) ? 'gold' : 'gray'">★</span>
-      </p>
+      <p>Average Rating: {{ movie.avg_rating || "No ratings yet" }}</p>
 
       <div *ngIf="movie.recommendations?.length" class="recommendations">
         <h5>Recommended:</h5>
@@ -63,7 +57,7 @@ interface Movie {
       <p>Year: {{ movie.release_year }}</p>
       <p>Genres: {{ movie.genres.map(g => g.name).join(', ') }}</p>
 
-      <p>Average Rating: {{ movie.avg_rating || 0 }}</p>
+      <p>Average Rating: {{ movie.avg_rating || "No ratings yet" }}</p>
       <p>
         Your Rating:
         <span *ngFor="let star of [1,2,3,4,5]"
