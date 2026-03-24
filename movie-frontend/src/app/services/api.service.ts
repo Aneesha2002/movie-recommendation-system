@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -19,41 +20,41 @@ export class ApiService {
     return new HttpHeaders({ 'Authorization': `Bearer ${token}` });
   }
 
-  getMovies(): Observable<any[] | { error: string }> {
-  const headers = this.getAuthHeaders();
-  if (!headers) return of({ error: 'User not logged in' });
-  return this.http.get<any[]>(`${this.baseUrl}/movies/`, { headers });
-}
+  /** Wrap GET requests to return empty array on error */
+  private safeGet<T>(obs: Observable<T>): Observable<T | []> {
+    return obs.pipe(
+      catchError(err => {
+        console.error('API error:', err);
+        return of([] as any);
+      })
+    );
+  }
 
-getTrending(): Observable<any[] | { error: string }> {
-  const headers = this.getAuthHeaders();
-  if (!headers) return of({ error: 'User not logged in' });
-  return this.http.get<any[]>(`${this.baseUrl}/movies/trending/`, { headers });
-}
+  getMovies(): Observable<any[]> {
+    const headers = this.getAuthHeaders();
+    return this.safeGet(this.http.get<any[]>(`${this.baseUrl}/movies/`, headers ? { headers } : {}));
+  }
 
-searchMovies(query: string): Observable<any[] | { error: string }> {
-  const headers = this.getAuthHeaders();
-  if (!headers) return of({ error: 'User not logged in' });
-  return this.http.get<any[]>(`${this.baseUrl}/movies/?search=${query}`, { headers });
-}
+  getTrending(): Observable<any[]> {
+    const headers = this.getAuthHeaders();
+    return this.safeGet(this.http.get<any[]>(`${this.baseUrl}/movies/trending/`, headers ? { headers } : {}));
+  }
+
+  searchMovies(query: string): Observable<any[]> {
+    const headers = this.getAuthHeaders();
+    return this.safeGet(this.http.get<any[]>(`${this.baseUrl}/movies/?search=${query}`, headers ? { headers } : {}));
+  }
 
   getMovieById(id: number): Observable<any> {
     const headers = this.getAuthHeaders();
-    if (!headers) return of({ error: 'User not logged in' });
-    return this.http.get(`${this.baseUrl}/movies/${id}/`, { headers });
+    return this.safeGet(this.http.get<any>(`${this.baseUrl}/movies/${id}/`, headers ? { headers } : {}));
   }
 
-  /** Submit or update rating with auth header */
   rateMovie(movieId: number, rating: number): Observable<any> {
     const token = this.authService.getAccessToken();
     if (!token) return of({ error: 'User not logged in' });
 
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
-
-    return this.http.post<any>(
-      `${this.baseUrl}/movies/${movieId}/rate/`,
-      { rating },
-      { headers }
-    );
+    return this.http.post<any>(`${this.baseUrl}/movies/${movieId}/rate/`, { rating }, { headers });
   }
 }

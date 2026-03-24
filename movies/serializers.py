@@ -32,8 +32,8 @@ class MovieSerializer(serializers.ModelSerializer):
         user = getattr(request, 'user', None)
         if user and user.is_authenticated:
             rating = obj.ratings.filter(user=user).first()
-            return rating.value if rating else 0
-        return 0
+            return rating.value if rating else None  # return None instead of 0
+        return None
 
     def get_recommendations(self, obj):
         # Avoid recursion: do not include recommendations of recommendations

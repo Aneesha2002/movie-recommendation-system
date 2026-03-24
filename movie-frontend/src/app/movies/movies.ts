@@ -25,7 +25,7 @@ interface Movie {
 <input type="text" placeholder="Search movies..." (input)="onSearch($event)" class="search-box" />
 
 <h2>🔥 Trending</h2>
-<div *ngIf="trending.length > 0; else noTrending" class="trending-container">
+<div *ngIf="trending.length; else noTrending" class="trending-container">
   <div *ngFor="let movie of trending" class="movie-card">
     <img [src]="getPoster(movie)" alt="{{ movie.title }}" />
     <div class="hover-info">
@@ -33,7 +33,6 @@ interface Movie {
       <p>{{ movie.description }}</p>
       <p>Year: {{ movie.release_year }}</p>
       <p>Genres: {{ movie.genres.map(g => g.name).join(', ') }}</p>
-
       <p>Average Rating: {{ movie.avg_rating || "No ratings yet" }}</p>
 
       <div *ngIf="movie.recommendations?.length" class="recommendations">
@@ -48,7 +47,7 @@ interface Movie {
 <ng-template #noTrending>No trending movies available</ng-template>
 
 <h2>🎬 All Movies ({{ movies.length }})</h2>
-<div *ngIf="movies.length > 0; else noMovies" class="movies-grid">
+<div *ngIf="movies.length; else noMovies" class="movies-grid">
   <div *ngFor="let movie of movies; trackBy: trackById" class="movie-card">
     <img [src]="getPoster(movie)" alt="{{ movie.title }}" />
     <div class="hover-info">
@@ -56,7 +55,6 @@ interface Movie {
       <p>{{ movie.description }}</p>
       <p>Year: {{ movie.release_year }}</p>
       <p>Genres: {{ movie.genres.map(g => g.name).join(', ') }}</p>
-
       <p>Average Rating: {{ movie.avg_rating || "No ratings yet" }}</p>
       <p>
         Your Rating:
@@ -78,7 +76,6 @@ interface Movie {
   `,
   styles: [`
 .search-box { margin-bottom:1rem; padding:0.5rem; width:100%; max-width:400px; font-size:1rem; }
-
 .movie-card { position: relative; width:200px; border-radius:8px; overflow:hidden; background:#f5f5f5; box-shadow:0 2px 6px rgba(0,0,0,0.15); text-align:center; cursor:pointer; transition: transform 0.2s, box-shadow 0.2s; }
 .movie-card:hover { transform:translateY(-5px); box-shadow:0 6px 12px rgba(0,0,0,0.25); }
 .movie-card img { width:100%; height:250px; object-fit:cover; }
@@ -113,34 +110,37 @@ export class MoviesComponent implements OnInit {
     });
   }
 
-  loadMovies() {
-    this.apiService.getMovies().subscribe(data => {
-      if (Array.isArray(data)) {
-        this.allMovies = data.map((m: any) => ({
-          ...m,
-          your_rating: m.your_rating ?? 0,
-          recommendations: m.recommendations ?? []
-        }));
-        this.movies = [...this.allMovies];
-        this.cdr.detectChanges();
-      } else if ('error' in data) {
-        alert(data.error);
-      }
-    });
-  }
+ loadMovies() {
+  this.apiService.getMovies().subscribe(data => {
+    // Treat as paginated response if not array
+    const moviesArray = Array.isArray(data)
+      ? data
+      : (data as { results?: any[] }).results ?? [];
 
-  loadTrending() {
-    this.apiService.getTrending().subscribe(data => {
-      if (Array.isArray(data)) {
-        this.trending = data.map((m: any) => ({
-          ...m,
-          your_rating: m.your_rating ?? 0,
-          recommendations: m.recommendations ?? []
-        }));
-        this.cdr.detectChanges();
-      }
-    });
-  }
+    this.allMovies = moviesArray.map((m: any) => ({
+      ...m,
+      your_rating: m.your_rating ?? 0,
+      recommendations: m.recommendations ?? []
+    }));
+    this.movies = [...this.allMovies];
+    this.cdr.detectChanges();
+  });
+}
+
+loadTrending() {
+  this.apiService.getTrending().subscribe(data => {
+    const trendingArray = Array.isArray(data)
+      ? data
+      : (data as { results?: any[] }).results ?? [];
+
+    this.trending = trendingArray.map((m: any) => ({
+      ...m,
+      your_rating: m.your_rating ?? 0,
+      recommendations: m.recommendations ?? []
+    }));
+    this.cdr.detectChanges();
+  });
+}
 
   onSearch(event: any) { this.searchSubject.next(event.target.value); }
 

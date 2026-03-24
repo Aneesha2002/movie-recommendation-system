@@ -1,151 +1,88 @@
-# Movie Recommendation Backend Service
+# 🎬 Movie Recommendation System
 
-## Overview
-
-This project is a backend service that provides personalized movie recommendations based on user ratings, genre similarity, and movie popularity. Users can browse movies, rate them, and receive recommendations tailored to their preferences.
-
-The system is designed as a containerized backend application built with Django and Django REST Framework, using PostgreSQL as the primary database.
+A **movie recommendation system** built with **Django REST Framework** for the backend and **Angular** for the frontend.  
+Features include movie browsing, searching, ratings, trending movies, and personalized recommendations.
 
 ---
 
-## Features
+## 🚀 Features
 
-* User authentication (signup and login)
-* Movie catalog with genres and metadata
-* User rating system (1–5 stars)
-* Hybrid recommendation engine based on:
+### Backend (Django + DRF)
+- **Movie management** with genres, ratings, and average rating calculations  
+- **User authentication** via JWT (signup, login, token refresh)  
+- **Personalized recommendations** based on user ratings  
+- **Trending movies** endpoint (most rated & highest-rated)  
+- **External API integration** with [TMDb](https://www.themoviedb.org/) for movie posters  
+- **Caching** using Redis (for trending & movie list endpoints)  
+- **CSV import commands** for initial movie data  
 
-  * Genre similarity
-  * User rating history
-  * Movie popularity
-* Search movies by title
-* Filter movies by genre
-* Trending / popular movies endpoint
-* REST API for movies, ratings, and recommendations
-* Simple frontend using Django templates
-* Containerized environment using Docker
-* Optional Redis caching layer
-
----
-
-## Tech Stack
-
-* Python
-* Django
-* Django REST Framework
-* PostgreSQL
-* Docker
-* Redis (optional)
+### Frontend (Angular)
+- Responsive UI to display movies and trending list  
+- **Search** movies by title, description, or genre  
+- **Rate movies** and see your rating alongside the average rating  
+- Displays **3 recommendations per movie**  
 
 ---
 
-## Architecture
+## 🛠 Tech Stack
 
-```
-Client (Browser / API client)
-        |
-        v
-Django REST API
-        |
-        v
-PostgreSQL Database
-        |
-        v
-Redis Cache (optional)
-```
+- **Backend:** Python 3.10, Django 5.2, Django REST Framework, PostgreSQL, Redis  
+- **Frontend:** Angular 17 (standalone components)  
+- **DevOps:** Docker, Docker Compose  
+- **Libraries & Tools:** `djangorestframework-simplejwt`, `django-redis`, `rapidfuzz`, `requests`, `python-dotenv`
 
 ---
 
-## Project Structure
+## ⚙️ Installation
 
-```
-movie-recommendation-service/
+### 1. Clone Repository
+```bash
+git clone <your-repo-url>
+cd movie-recommendation-system
 
-├── app/
-│   ├── manage.py
-│   ├── config/
-│   ├── users/
-│   ├── movies/
-│   ├── ratings/
-│   └── recommendations/
-│
-├── docker/
-│   ├── Dockerfile
-│   └── docker-compose.yml
-│
-├── requirements.txt
-└── README.md
-```
+2. Backend Setup
+Create .env file:
+TMDB_API_KEY=your_tmdb_api_key
+SECRET_KEY=your_django_secret_key
+DEBUG=True
+Build and run Docker containers:
+docker-compose up --build
+Apply migrations & import movies:
+docker-compose exec web python manage.py migrate
+docker-compose exec web python manage.py import_movies
+docker-compose exec web python manage.py populate_posters
 
----
+Backend API is available at: http://localhost:8000/api/
 
-## Core API Endpoints
+3. Frontend Setup
+Navigate to frontend folder:
+cd movie_frontend
+Install dependencies:
+npm install
+Run Angular app:
+ng serve
 
-```
-POST   /api/auth/signup
-POST   /api/auth/login
+Frontend is accessible at: http://localhost:4200/
 
-GET    /api/movies
-GET    /api/movies/{id}
+⚠️ Ensure backend is running at http://localhost:8000/ or update baseUrl in api.service.ts.
 
-POST   /api/ratings
+ API Endpoints
+Endpoint	Method	Description
+/api/movies/	GET	List all movies (supports search ?search=)
+/api/movies/<id>/	GET	Retrieve movie details with recommendations
+/api/movies/trending/	GET	Top 5 trending movies
+/api/movies/<id>/rate/	POST	Submit or update rating (JWT required)
+/api/users/signup/	POST	Register new user
+/api/users/login/	POST	JWT login
 
-GET    /api/movies/trending
-GET    /api/recommendations
-```
+ Future Improvements
+Frontend pagination for movies
+Improved recommendation algorithm: hybrid collaborative + content-based filtering
+Unit & integration tests for backend endpoints
+Production-ready deployment: Nginx + Gunicorn, HTTPS, Docker optimizations
+Cloud media storage for posters (e.g., S3 or Cloudinary)
+Rate limiting and caching enhancements for high traffic
 
----
-
-## Recommendation Strategy
-
-The recommendation system uses a hybrid scoring approach that combines multiple factors.
-
-Example scoring formula:
-
-```
-Recommendation Score =
-0.5 * Genre Similarity
-+ 0.3 * User Rating Similarity
-+ 0.2 * Movie Popularity
-```
-
-The system recommends movies that:
-
-* Match the genres the user rates highly
-* Are popular or highly rated by other users
-* Have not already been rated by the user
-
----
-
-## Setup (Planned)
-
-Instructions for running the project will include:
-
-```
-git clone <repository>
-docker compose up
-python manage.py migrate
-python manage.py runserver
-```
-
----
-
-## Future Improvements
-
-* Advanced recommendation algorithms
-* Collaborative filtering
-* Background recommendation jobs
-* Pagination and performance optimization
-* Unit and integration tests
-
----
-
-## Goal of the Project
-
-This project demonstrates backend engineering skills including:
-
-* REST API design
-* relational database modeling
-* recommendation logic
-* containerized development with Docker
-* scalable backend architecture
+ Notes
+The system currently displays 3 recommendations per movie.
+Redis caching is used for trending movies and movie list endpoints; suitable for demo purposes but can be scaled for production.

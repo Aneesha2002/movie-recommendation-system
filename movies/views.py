@@ -5,14 +5,17 @@ from rest_framework.permissions import IsAuthenticated
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 from django.db.models import Q
+
 from .models import Movie, Rating
 from .serializers import MovieSerializer, RatingSerializer
+from rest_framework.pagination import PageNumberPagination
 
-# Movies list with search
+
+# Movies list with search and pagination
 @method_decorator(cache_page(60 * 10), name='dispatch')
 class MovieListView(generics.ListAPIView):
     serializer_class = MovieSerializer
-    pagination_class = None
+    pagination_class = None  # disables pagination for this endpoint
 
     def get_queryset(self):
         qs = Movie.objects.all()
@@ -26,15 +29,17 @@ class MovieListView(generics.ListAPIView):
         return qs
 
     def get_serializer_context(self):
-        # Pass the request so your MovieSerializer can return your_rating correctly
+        # Pass request to serializer for your_rating
         context = super().get_serializer_context()
         context['request'] = self.request
         return context
+
 
 # Movie details
 class MovieDetailView(generics.RetrieveAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
+
 
 # Trending movies by average rating
 @method_decorator(cache_page(60 * 10), name='dispatch')
@@ -44,6 +49,8 @@ class TrendingMoviesView(APIView):
         serializer = MovieSerializer(trending, many=True, context={'request': request})
         return Response(serializer.data)
 
+
+# Submit or update rating for a movie
 class SubmitRatingView(APIView):
     permission_classes = [IsAuthenticated]
 

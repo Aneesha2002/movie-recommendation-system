@@ -90,28 +90,21 @@ class Command(BaseCommand):
         failed_movies = []
 
         for i, movie in enumerate(movies, start=1):
-            poster = fetch_tmdb_poster(movie.title, getattr(movie, 'year', None))
-
-            # Retry without year
+            poster = fetch_tmdb_poster(movie.title, movie.release_year)
             if not poster:
                 poster = fetch_tmdb_poster(movie.title)
-
-            # Retry with normalized title
             if not poster:
                 normalized = normalize_title(movie.title)
                 poster = fetch_tmdb_poster(normalized)
-
-            if poster:
-                movie.poster_url = poster
-                movie.save(update_fields=["poster_url"])
-            else:
+            if not poster:
+                poster = DEFAULT_POSTER
                 failed_movies.append(movie.title)
-                continue
 
             movie.poster_url = poster
             movie.save(update_fields=["poster_url"])
+
             self.stdout.write(f"[{i}/{total}] Updated: {movie.title} -> {poster}")
-            time.sleep(1)  # Respect TMDb rate limits
+            time.sleep(1) 
 
         self.stdout.write("Done!")
         if failed_movies:

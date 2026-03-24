@@ -8,7 +8,7 @@ class RecommendationView(APIView):
     def get(self, request, user_id):
         # Get user ratings
         user_ratings = Rating.objects.filter(user_id=user_id)
-        liked_movies = user_ratings.filter(rating__gte=4)
+        liked_movies = user_ratings.filter(value__gte=4)
 
         # Get genres from liked movies
         liked_genre_ids = []
@@ -20,22 +20,22 @@ class RecommendationView(APIView):
 
         # Candidate movies
         movies = Movie.objects.annotate(
-            avg_rating=Avg('rating__rating'),
-            num_ratings=Count('rating')
+            avg_rating=Avg('ratings__value'),
+            num_ratings=Count('ratings')
         ).filter(
             genres__id__in=liked_genre_ids
         ).exclude(
             id__in=rated_movie_ids
         ).distinct()
 
-        # Simple hybrid scoring: genre + popularity + avg_rating
+        # Hybrid scoring: genre match + avg_rating + num_ratings
         movie_scores = []
         for movie in movies:
             genre_match_count = len(set([g.id for g in movie.genres.all()]) & set(liked_genre_ids))
             score = genre_match_count * 0.5 + (movie.avg_rating or 0) * 0.3 + movie.num_ratings * 0.2
             movie_scores.append((score, movie))
 
-        # Sort by score descending
+        # Top 10 by score
         top_movies = [m for s, m in sorted(movie_scores, key=lambda x: x[0], reverse=True)][:10]
 
         data = [{"id": m.id, "title": m.title} for m in top_movies]
@@ -43,10 +43,10 @@ class RecommendationView(APIView):
 
 class TrendingMoviesView(APIView):
     def get(self, request):
-        # Top 5 movies with most ratings
+        # Top 5 movies with most ratings, then avg_rating
         movies = Movie.objects.annotate(
-            num_ratings=Count('rating'),
-            avg_rating=Avg('rating__rating')
+            num_ratings=Count('ratings'),
+            avg_rating=Avg('ratings__value')
         ).order_by('-num_ratings', '-avg_rating')[:5]
 
         data = [
