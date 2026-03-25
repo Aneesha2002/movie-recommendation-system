@@ -21,16 +21,19 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "public",
+                "output": "/"
               }
             ],
-            "styles": [
-              "src/styles.css"
-            ]
+            "styles": ["src/styles.css"],
+            "baseHref": "/",
+            "deployUrl": "./"
           },
           "configurations": {
             "production": {
               "outputPath": "dist",
+              "optimization": true,
+              "outputHashing": "all",
               "budgets": [
                 {
                   "type": "initial",
@@ -42,8 +45,7 @@
                   "maximumWarning": "4kB",
                   "maximumError": "8kB"
                 }
-              ],
-              "outputHashing": "all"
+              ]
             },
             "development": {
               "optimization": false,
