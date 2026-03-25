@@ -30,7 +30,7 @@
           },
           "configurations": {
             "production": {
-              "outputPath": "dist/movie-frontend",
+              "outputPath": "dist/movie-frontend/browser",
               "budgets": [
                 {
                   "type": "initial",

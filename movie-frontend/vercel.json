@@ -1,4 +1,5 @@
 {
+  "outputDirectory": "dist/movie-frontend/browser",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
