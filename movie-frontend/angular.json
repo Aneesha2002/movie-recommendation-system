@@ -30,6 +30,7 @@
           },
           "configurations": {
             "production": {
+              "outputPath": "dist/movie-frontend",
               "budgets": [
                 {
                   "type": "initial",
