@@ -13,16 +13,14 @@ class RatingCreateView(APIView):
         serializer = RatingSerializer(data=request.data)
 
         if serializer.is_valid():
-            rating = serializer.save()
+            rating = serializer.save(user=request.user)
 
             movie = rating.movie
 
-            # ✅ Correct field name
             avg_rating = movie.ratings.aggregate(
                 avg=Avg('value')
             )['avg']
 
-            # ✅ Handle None properly
             movie.average_rating = round(avg_rating, 2) if avg_rating else None
             movie.save(update_fields=["average_rating"])
 

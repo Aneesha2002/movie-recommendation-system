@@ -60,7 +60,7 @@ interface Movie {
         Your Rating:
         <span *ngFor="let star of [1,2,3,4,5]"
               (click)="rateMovie(movie, star)"
-              [style.color]="star <= (movie?.your_rating ?? 0) ? 'gold' : 'gray'">★</span>
+              [style.color]="star <= (movie?.your_rating ?? No ratings yet) ? 'gold' : 'gray'">★</span>
       </p>
 
       <div *ngIf="movie.recommendations?.length" class="recommendations">
@@ -119,7 +119,7 @@ export class MoviesComponent implements OnInit {
 
     this.allMovies = moviesArray.map((m: any) => ({
       ...m,
-      your_rating: m.your_rating ?? 0,
+      your_rating: m.your_rating ?? null,
       recommendations: m.recommendations ?? []
     }));
     this.movies = [...this.allMovies];
@@ -135,7 +135,7 @@ loadTrending() {
 
     this.trending = trendingArray.map((m: any) => ({
       ...m,
-      your_rating: m.your_rating ?? 0,
+      your_rating: m.your_rating ?? null,
       recommendations: m.recommendations ?? []
     }));
     this.cdr.detectChanges();

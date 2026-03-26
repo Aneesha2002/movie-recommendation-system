@@ -18,13 +18,14 @@ class MovieSerializer(serializers.ModelSerializer):
     avg_rating = serializers.FloatField(source='average_rating', read_only=True)
     your_rating = serializers.SerializerMethodField()
     recommendations = serializers.SerializerMethodField()
+    ratings = RatingSerializer(many=True, read_only=True)
 
     class Meta:
         model = Movie
         fields = [
             'id', 'title', 'description', 'release_year',
             'genres', 'poster_url', 'avg_rating', 'your_rating',
-            'recommendations'
+            'recommendations', 'ratings' 
         ]
 
     def get_your_rating(self, obj):
