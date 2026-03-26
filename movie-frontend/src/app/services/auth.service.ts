@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = 'http://localhost:8000/api/users/';
+  private apiUrl = 'https://movie-recommendation-system-cef2.onrender.com/api/users/';
 
   constructor(private http: HttpClient) {}
 
