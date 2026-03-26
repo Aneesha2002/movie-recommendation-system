@@ -9,7 +9,7 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'http://localhost:8000/api';
+  private baseUrl = 'https://movie-recommendation-system-cef2.onrender.com/api';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
