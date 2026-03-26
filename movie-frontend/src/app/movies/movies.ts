@@ -60,7 +60,7 @@ interface Movie {
         Your Rating:
         <span *ngFor="let star of [1,2,3,4,5]"
               (click)="rateMovie(movie, star)"
-              [style.color]="star <= (movie?.your_rating ?? "No ratings yet") ? 'gold' : 'gray'">★</span>
+              [style.color]="star <= (movie?.your_rating ?? 'No ratings yet') ? 'gold' : 'gray'">★</span>
       </p>
 
       <div *ngIf="movie.recommendations?.length" class="recommendations">
