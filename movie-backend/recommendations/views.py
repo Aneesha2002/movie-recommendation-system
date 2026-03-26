@@ -11,28 +11,29 @@ class RecommendationView(APIView):
         liked_movies = user_ratings.filter(value__gte=4)
 
         # Get genres from liked movies
-        liked_genre_ids = []
+        liked_genre_ids = set()
         for rating in liked_movies:
-            liked_genre_ids.extend([g.id for g in rating.movie.genres.all()])
+            liked_genre_ids.update(g.id for g in rating.movie.genres.all())
 
         # Already rated movies
         rated_movie_ids = user_ratings.values_list('movie_id', flat=True)
 
         # Candidate movies
         movies = Movie.objects.annotate(
-            avg_rating=Avg('ratings__value'),
-            num_ratings=Count('ratings')
+    avg_rating=Avg('ratings__value'),
+    num_ratings=Count('ratings')
         ).filter(
-            genres__id__in=liked_genre_ids
+    genres__id__in=liked_genre_ids
         ).exclude(
-            id__in=rated_movie_ids
-        ).distinct()
+    id__in=rated_movie_ids
+        ).distinct().prefetch_related('genres')[:50]
 
         # Hybrid scoring: genre match + avg_rating + num_ratings
         movie_scores = []
         for movie in movies:
-            genre_match_count = len(set([g.id for g in movie.genres.all()]) & set(liked_genre_ids))
-            score = genre_match_count * 0.5 + (movie.avg_rating or 0) * 0.3 + movie.num_ratings * 0.2
+            movie_genre_ids = {g.id for g in movie.genres.all()}
+            genre_match_count = len(movie_genre_ids & liked_genre_ids)
+            score = (genre_match_count * 0.5 +(movie.avg_rating or 0) * 0.3 +(movie.num_ratings or 0) * 0.2)
             movie_scores.append((score, movie))
 
         # Top 10 by score
