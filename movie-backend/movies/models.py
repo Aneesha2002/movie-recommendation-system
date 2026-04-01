@@ -19,7 +19,6 @@ class Movie(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     poster_url = models.URLField(max_length=500, blank=True, null=True)
 
-    # ✅ NEW FIELD (for 100% accurate TMDb mapping)
     tmdb_id = models.IntegerField(null=True, blank=True)
 
     def __str__(self):

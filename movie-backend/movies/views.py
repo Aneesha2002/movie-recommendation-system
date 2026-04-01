@@ -15,7 +15,7 @@ from rest_framework.pagination import PageNumberPagination
 @method_decorator(cache_page(60 * 10), name='dispatch')
 class MovieListView(generics.ListAPIView):
     serializer_class = MovieSerializer
-    pagination_class = None  # disables pagination for this endpoint
+    pagination_class = None  
 
     def get_queryset(self):
         qs = Movie.objects.all()
