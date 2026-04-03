@@ -15,7 +15,7 @@ from .serializers import MovieSerializer
 # -------------------------------
 class MovieListView(generics.ListAPIView):
     serializer_class = MovieSerializer
-    permission_classes = [AllowAny]  # ✅ Allow anyone to view movies
+    permission_classes = [AllowAny]  
     pagination_class = None  
 
     def get_queryset(self):
@@ -48,7 +48,7 @@ class MovieListView(generics.ListAPIView):
 class MovieDetailView(generics.RetrieveAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
-    permission_classes = [AllowAny]  # ✅ Public
+    permission_classes = [AllowAny] 
 
 
 # -------------------------------
@@ -76,7 +76,7 @@ class TrendingMoviesView(APIView):
 # Protected: Submit Rating
 # -------------------------------
 class SubmitRatingView(APIView):
-    permission_classes = [IsAuthenticated]  # 🔒 Login required
+    permission_classes = [IsAuthenticated]  # Login required
 
     def post(self, request, movie_id):
         """
