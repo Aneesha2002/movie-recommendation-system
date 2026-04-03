@@ -1,50 +1,215 @@
 title,genre,overview,year
-The Shawshank Redemption,Drama,Prison escape and hope story,1994
-Forrest Gump,Drama|Romance,Life journey of a simple man,1994
-Titanic,Romance|Drama,Love story on doomed ship,1997
 The Matrix,Sci-Fi|Action,Reality is a simulation,1999
-The Mask,Comedy|Fantasy,A man discovers a magical mask,1994
-Dumb and Dumber,Comedy,Two friends on a road trip,1994
-Bruce Almighty,Comedy|Fantasy,A man gains godlike powers,2003
-Yes Man,Comedy,Man says yes to everything,2008
-The Devil Wears Prada,Comedy|Drama,Young woman works for a demanding boss,2006
-Just Like Heaven,Romance|Comedy|Fantasy,A man falls for a ghost,2005
-Legally Blonde,Comedy|Romance,A woman goes to Harvard Law,2001
-Sweet Home Alabama,Romance|Comedy,Returning home to past love,2002
-Shrek,Animation|Comedy|Adventure,Ogre rescues princess,2001
-Shrek 2,Animation|Comedy|Adventure,Ogre returns for new adventure,2004
-Shrek the Third,Animation|Comedy|Adventure,Ogre seeks a successor,2007
-Shrek Forever After,Animation|Comedy|Adventure,Ogre struggles with midlife crisis,2010
-Kung Fu Panda,Animation|Comedy|Action,Panda becomes kung fu hero,2008
-Kung Fu Panda 2,Animation|Comedy|Action,Panda faces new villain,2011
-Kung Fu Panda 3,Animation|Comedy|Action,Panda discovers his origins,2016
-Moana,Animation|Adventure|Family,Girl saves her island,2016
-Doctor Strange,Action|Adventure|Fantasy,Doctor learns magic arts,2016
-Doctor Strange in the Multiverse of Madness,Action|Adventure|Fantasy,Doctor travels multiverse,2022
-Inception,Action|Adventure|Sci-Fi,Heist inside dreams,2010
-The Karate Kid,Action|Drama,Young boy learns martial arts from mentor,2010
-The Avengers,Action|Adventure|Sci-Fi,Superheroes unite to save Earth,2012
-Iron Man,Action|Adventure|Sci-Fi,Tech genius becomes superhero,2008
-Hulk,Action|Adventure|Sci-Fi,Scientist transforms into a green giant,2003
-Spotlight,Drama|History,Investigative journalism uncovers scandal,2015
-The Other Guys,Comedy|Action,Two detectives uncover a financial crime,2010
-Horrible Bosses,Comedy|Crime,Three friends plot against bosses,2011
-The Proposal,Romance|Comedy,Boss and assistant fake engagement,2009
-Pretty Woman,Romance|Comedy,A businessman falls for escort,1990
-The Notebook,Romance|Drama,Young lovers separated by fate,2004
-Ocean’s Eleven,Crime|Thriller,Group plans casino heist,2001
-Ocean’s Twelve,Crime|Thriller,Heist crew travels Europe,2004
-Ocean’s Thirteen,Crime|Thriller,Crew plans revenge heist,2007
-The Lion King,Animation|Drama|Adventure,Lion prince grows to reclaim kingdom,1994
-Aladdin,Animation|Adventure|Family,Boy finds magical lamp,1992
-Beauty and the Beast,Animation|Romance|Fantasy,Girl meets enchanted prince,1991
-Mamma Mia!,Musical|Comedy,Wedding preparations uncover secrets,2008
-The Intern,Comedy|Drama|Romance,Older man joins startup,2015
-50 First Dates,Romance|Comedy,Man falls for woman with memory loss,2004
-Eternal Sunshine of the Spotless Mind,Romance|Drama,A couple erases memories of love,2004
-Catch Me If You Can,Drama|Crime,Man cons his way across America,2002
-Zootopia,Animation|Adventure|Comedy,Rabbit cop uncovers conspiracy,2016
-Frozen,Animation|Adventure|Family,Princesses save kingdom from eternal winter,2013
-Avengers: Endgame,Action|Adventure|Sci-Fi,Superheroes undo multiverse damage,2019
-Black Panther,Action|Adventure|Sci-Fi,King of Wakanda fights threats,2018
-Guardians of the Galaxy,Action|Adventure|Sci-Fi,Space misfits save galaxy,2014
+Inception,Sci-Fi|Thriller,A thief steals secrets through dreams,2010
+Interstellar,Sci-Fi|Drama,A journey through space and time,2014
+The Lion King,Animation|Drama,A lion cub rises to be king,1994
+Frozen,Animation|Fantasy,Two sisters in a magical kingdom,2013
+Frozen II,Animation|Fantasy,Elsa discovers her powers origin,2019
+Moana,Animation|Adventure,A girl sails to save her island,2016
+Tangled,Animation|Romance,Rapunzel escapes her tower,2010
+Beauty and the Beast,Animation|Romance,A cursed prince finds love,1991
+Aladdin,Animation|Adventure,A street boy finds a magic lamp,1992
+The Little Mermaid,Animation|Romance,A mermaid dreams of land,1989
+Mulan,Animation|Action,A girl disguises as a warrior,1998
+Zootopia,Animation|Comedy,A bunny cop solves a mystery,2016
+Encanto,Animation|Fantasy,A magical family loses powers,2021
+Coco,Animation|Drama,A boy explores the land of the dead,2017
+Shrek,Animation|Comedy,An ogre rescues a princess,2001
+Shrek 2,Animation|Comedy,Shrek meets royal family,2004
+Kung Fu Panda,Animation|Action,A panda becomes a warrior,2008
+Kung Fu Panda 2,Animation|Action,Po faces his past,2011
+Madagascar,Animation|Comedy,Animals escape zoo,2005
+How to Train Your Dragon,Animation|Fantasy,A boy befriends a dragon,2010
+Megamind,Animation|Comedy,A villain becomes a hero,2010
+The Croods,Animation|Adventure,A prehistoric family survives change,2013
+Minions,Animation|Comedy,Minions seek a master,2015
+Despicable Me,Animation|Comedy,A villain adopts children,2010
+Despicable Me 2,Animation|Comedy,Gru becomes a hero,2013
+The Incredibles,Animation|Action,A superhero family returns,2004
+Incredibles 2,Animation|Action,Family balances hero life,2018
+Toy Story,Animation|Adventure,Toys come alive,1995
+Toy Story 3,Animation|Drama,Toys face growing up,2010
+Finding Nemo,Animation|Adventure,A fish searches for his son,2003
+Finding Dory,Animation|Adventure,Dory finds her family,2016
+Ratatouille,Animation|Comedy,A rat becomes a chef,2007
+Up,Animation|Adventure,An old man flies with balloons,2009
+Inside Out,Animation|Drama,Emotions guide a girl,2015
+Cars,Animation|Comedy,A race car learns humility,2006
+Brave,Animation|Adventure,A princess defies fate,2012
+Soul,Animation|Drama,A musician finds purpose,2020
+Luca,Animation|Adventure,A sea monster explores land,2021
+Turning Red,Animation|Comedy,A girl transforms into panda,2022
+The Jungle Book,Adventure|Drama,A boy grows in jungle,2016
+Aladdin (Live),Adventure|Fantasy,A remake of classic tale,2019
+Beauty and the Beast (Live),Romance|Fantasy,A magical love story,2017
+Cinderella,Romance|Fantasy,A girl finds her destiny,2015
+Maleficent,Fantasy|Drama,A villain's story,2014
+Cruella,Drama|Crime,A villain rises in fashion world,2021
+The Devil Wears Prada,Drama|Comedy,A girl enters fashion world,2006
+The Intern,Drama|Comedy,A senior intern learns business,2015
+Ocean's 8,Crime|Comedy,A group plans a heist,2018
+Princess Diaries,Comedy|Romance,A girl becomes a princess,2001
+Princess Diaries 2,Comedy|Romance,Princess faces royal duties,2004
+Love & Other Drugs,Romance|Drama,A salesman falls in love,2010
+13 Going on 30,Romance|Fantasy,A girl wakes as adult,2004
+Legally Blonde,Comedy|Romance,A girl proves herself in law school,2001
+Legally Blonde 2,Comedy|Romance,Elle fights for justice,2003
+Sweet Home Alabama,Romance|Comedy,A woman returns to hometown,2002
+Big Little Lies,Drama|Mystery,Secrets in a coastal town,2017
+Now You See Me,Crime|Thriller,Magicians perform heists,2013
+Spotlight,Drama|Biography,Journalists uncover truth,2015
+Avengers,Action|Sci-Fi,Heroes unite to save Earth,2012
+Avengers Endgame,Action|Sci-Fi,Final battle against Thanos,2019
+Iron Man,Action|Sci-Fi,A billionaire builds a suit,2008
+Thor Ragnarok,Action|Comedy,Thor saves his world,2017
+Hulk,Action|Sci-Fi,A scientist transforms into monster,2003
+Shutter Island,Thriller|Mystery,A detective investigates asylum,2010
+The Dark Knight,Action|Crime,Batman faces Joker,2008
+Jab We Met,Romance|Comedy,A lively girl meets a broken man,2007
+Kabhi Khushi Kabhie Gham,Drama|Family,A rich family faces separation,2001
+Kal Ho Naa Ho,Drama|Romance,A man teaches how to live,2003
+Dilwale Dulhania Le Jayenge,Romance|Drama,A love story across countries,1995
+My Name is Khan,Drama|Romance,A man journeys across America,2010
+Chennai Express,Comedy|Action,A man travels to South India,2013
+Ra.One,Action|Sci-Fi,A game villain becomes real,2011
+Don,Action|Crime,A criminal mastermind story,2006
+Don 2,Action|Crime,Don expands globally,2011
+Veer-Zaara,Romance|Drama,A cross-border love story,2004
+Om Shanti Om,Romance|Drama,Reincarnation love story,2007
+Queen,Drama|Comedy,A woman finds herself,2014
+Tanu Weds Manu,Romance|Comedy,A chaotic love story,2011
+Tanu Weds Manu Returns,Romance|Comedy,Marriage complications,2015
+Jab Tak Hai Jaan,Romance|Drama,A soldier's love story,2012
+Good Newwz,Comedy|Drama,IVF mix-up comedy,2019
+3 Idiots,Drama|Comedy,Engineering life and friendship,2009
+PK,Comedy|Drama,An alien questions religion,2014
+Barfi,Romance|Drama,A silent love story,2012
+Tamasha,Drama|Romance,A man finds himself,2015
+Rockstar,Drama|Music,A singer's journey,2011
+Wake Up Sid,Drama|Romance,A boy grows up,2009
+Yeh Jawaani Hai Deewani,Romance|Drama,Friendship and love,2013
+Zindagi Na Milegi Dobara,Drama|Adventure,Friends travel Spain,2011
+Dil Chahta Hai,Drama|Friendship,Modern friendship story,2001
+Andhadhun,Thriller|Crime,A blind pianist mystery,2018
+Drishyam,Thriller|Crime,A man protects family,2015
+Kahaani,Thriller|Mystery,A pregnant woman searches truth,2012
+Stree,Comedy|Horror,A ghost targets men,2018
+Bhool Bhulaiyaa,Comedy|Horror,A haunted palace story,2007
+Gully Boy,Drama|Music,A rapper rises from slums,2019
+Padman,Drama|Biography,A man creates sanitary pads,2018
+Dangal,Drama|Sports,A father trains daughters,2016
+Chak De India,Drama|Sports,Women's hockey team wins,2007
+Lagaan,Drama|Sports,Villagers play cricket,2001
+Swades,Drama,A man returns to village,2004
+English Vinglish,Drama,A woman gains confidence,2012
+Piku,Drama|Comedy,A father-daughter story,2015
+Lunchbox,Drama|Romance,A mistaken delivery leads to love,2013
+Masaan,Drama,Life and loss in Varanasi,2015
+Haider,Drama|Crime,A Shakespeare adaptation,2014
+Article 15,Drama|Crime,Police investigate caste crime,2019
+Newton,Drama,An election officer struggles,2017
+Badhaai Ho,Comedy|Drama,Unexpected pregnancy in family,2018
+Bareilly Ki Barfi,Romance|Comedy,Small-town love story,2017
+The Godfather,Crime|Drama,Mafia family power struggle,1972
+The Godfather Part II,Crime|Drama,The rise and fall of a mafia empire,1974
+The Shawshank Redemption,Drama,A man finds hope in prison,1994
+Forrest Gump,Drama|Romance,A man lives through historic events,1994
+Fight Club,Drama,A man forms an underground fight club,1999
+Pulp Fiction,Crime|Drama,Interconnected crime stories,1994
+The Silence of the Lambs,Thriller|Crime,An FBI agent hunts a killer,1991
+Se7en,Crime|Thriller,Detectives chase a serial killer,1995
+Gladiator,Action|Drama,A general seeks revenge,2000
+Titanic,Romance|Drama,A love story on a sinking ship,1997
+Jurassic Park,Adventure|Sci-Fi,Dinosaurs are brought back to life,1993
+The Terminator,Action|Sci-Fi,A cyborg hunts a woman,1984
+Terminator 2: Judgment Day,Action|Sci-Fi,A robot protects humanity,1991
+Back to the Future,Sci-Fi|Adventure,A teen travels through time,1985
+The Lord of the Rings: The Fellowship of the Ring,Fantasy|Adventure,A quest begins,2001
+The Lord of the Rings: The Two Towers,Fantasy|Adventure,Battle for Middle Earth,2002
+The Lord of the Rings: The Return of the King,Fantasy|Adventure,Final battle for the ring,2003
+Harry Potter and the Sorcerer's Stone,Fantasy|Adventure,A boy discovers magic,2001
+Harry Potter and the Chamber of Secrets,Fantasy|Adventure,A dark secret is revealed,2002
+Harry Potter and the Prisoner of Azkaban,Fantasy|Adventure,A dangerous prisoner escapes,2004
+Spirited Away,Animation|Fantasy,A girl enters a spirit world,2001
+My Neighbor Totoro,Animation|Fantasy,Two girls meet forest spirits,1988
+Your Name,Animation|Romance,Two strangers share a connection,2016
+Parasite,Thriller|Drama,A poor family infiltrates a rich home,2019
+Oldboy,Thriller|Action,A man seeks revenge after imprisonment,2003
+Train to Busan,Horror|Action,Zombies attack a train,2016
+The Handmaiden,Drama|Romance,A con story in Korea,2016
+Hero,Action|Drama,A warrior tells his story,2002
+Crouching Tiger Hidden Dragon,Action|Drama,A tale of warriors and love,2000
+Infernal Affairs,Crime|Thriller,Undercover cops in Hong Kong,2002
+Chungking Express,Romance|Drama,Two love stories intersect,1994
+In the Mood for Love,Romance|Drama,A subtle love story,2000
+Rashomon,Drama|Mystery,Different perspectives of a crime,1950
+Seven Samurai,Action|Drama,Samurai defend a village,1954
+Akira,Animation|Sci-Fi,A dystopian future in Tokyo,1988
+Perfect Blue,Animation|Thriller,A pop idol loses grip on reality,1997
+Memories of Murder,Crime|Drama,A serial killer investigation,2003
+The Wailing,Horror|Mystery,A village faces evil,2016
+Burning,Drama|Mystery,A man suspects something sinister,2018
+Decision to Leave,Romance|Thriller,A detective falls for a suspect,2022
+RRR,Action|Drama,Two revolutionaries fight British rule,2022
+Baahubali: The Beginning,Action|Fantasy,A warrior's origin story,2015
+Baahubali: The Conclusion,Action|Fantasy,The epic conclusion,2017
+KGF Chapter 1,Action|Crime,A man rises in the gold mafia,2018
+KGF Chapter 2,Action|Crime,The empire expands,2022
+Pushpa,Action|Crime,A man rises in smuggling world,2021
+Arjun Reddy,Romance|Drama,A flawed surgeon's love story,2017
+Geetha Govindam,Romance|Comedy,A charming love story,2018
+Eega,Fantasy|Action,A man reincarnates as a fly,2012
+Super Deluxe,Drama|Crime,Multiple stories intertwine,2019
+Drishyam 2,Thriller|Crime,A man protects his family again,2021
+Vikram,Action|Thriller,A covert ops thriller,2022
+Jailer,Action|Drama,A retired officer returns,2023
+Master,Action|Drama,A professor faces a gangster,2021
+Leo,Action|Thriller,A mysterious man's past unfolds,2023
+Kaithi,Action|Thriller,A prisoner helps police,2019
+Asuran,Drama|Action,A farmer fights oppression,2019
+Sivaji,Action|Drama,A man fights corruption,2007
+Enthiran,Action|Sci-Fi,A robot gains emotions,2010
+Kabali,Action|Drama,A gangster returns,2016
+Ponniyin Selvan,Drama|History,A historical epic,2022
+96,Romance|Drama,A reunion of past lovers,2018
+Premam,Romance|Drama,A man's love journey,2015
+Bangalore Days,Drama|Romance,Friends explore life,2014
+Udaan,Drama,A boy dreams of freedom,2010
+Court,Drama,A legal system critique,2014
+Ship of Theseus,Drama|Philosophy,Questions identity,2013
+Talvar,Crime|Drama,A real-life murder case,2015
+Pink,Drama|Crime,A court case about consent,2016
+Raazi,Drama|Thriller,A spy marries into enemy family,2018
+Uri: The Surgical Strike,Action|War,A military operation,2019
+Kesari,Action|War,A historic battle,2019
+Tumbbad,Horror|Fantasy,A cursed treasure,2018
+Bulbbul,Horror|Drama,A haunting feminist tale,2020
+NH10,Thriller|Crime,A couple faces violence,2015
+Rang De Basanti,Drama|Patriotism,Youth awaken to activism,2006
+Lakshya,Drama|War,A man finds purpose,2004
+Rock On,Drama|Music,A band reunites,2008
+Fashion,Drama,A model's rise and fall,2008
+Page 3,Drama,Media world secrets,2005
+Corporate,Drama,Business politics,2006
+Black Swan,Drama|Thriller,A ballerina descends into madness,2010
+Whiplash,Drama|Music,A drummer faces pressure,2014
+La La Land,Romance|Music,A love story in Hollywood,2016
+The Social Network,Drama,A story of Facebook creation,2010
+The Big Short,Drama|Finance,The 2008 financial crisis,2015
+Moneyball,Drama|Sports,A new way of baseball,2011
+The Wolf of Wall Street,Crime|Drama,A stockbroker's rise,2013
+Gone Girl,Thriller|Drama,A missing wife mystery,2014
+Prisoners,Thriller|Crime,A father searches for his daughter,2013
+Nightcrawler,Thriller|Crime,A man exploits crime news,2014
+Drive,Action|Crime,A getaway driver story,2011
+Mad Max Fury Road,Action|Adventure,A high-speed chase,2015
+Blade Runner,Sci-Fi|Drama,A cop hunts replicants,1982
+Blade Runner 2049,Sci-Fi|Drama,A sequel to the classic,2017
+Ex Machina,Sci-Fi|Thriller,AI and consciousness,2015
+Arrival,Sci-Fi|Drama,Aliens arrive on Earth,2016
+Her,Romance|Sci-Fi,A man falls in love with AI,2013
+Gravity,Sci-Fi|Thriller,A survival in space,2013
+The Martian,Sci-Fi|Adventure,An astronaut survives Mars,2015
+Edge of Tomorrow,Sci-Fi|Action,A time loop battle,2014
+Looper,Sci-Fi|Thriller,A hitman faces himself,2012
+The Prestige,Drama|Mystery,Two rival magicians obsess over their craft,2006
