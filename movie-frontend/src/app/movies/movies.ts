@@ -34,17 +34,21 @@ interface Movie {
       <p>Year: {{ movie.release_year }}</p>
       <p>Genres: {{ movie.genres.map(g => g.name).join(', ') }}</p>
       <p>Average Rating: {{ movie.avg_rating || "No ratings yet" }}</p>
-
-      <div *ngIf="movie.recommendations?.length" class="recommendations">
-        <h5>Recommended:</h5>
-        <ul>
-          <li *ngFor="let rec of movie.recommendations">{{ rec.title }}</li>
-        </ul>
-      </div>
     </div>
   </div>
 </div>
 <ng-template #noTrending>No trending movies available</ng-template>
+
+<h2>🎯 Recommended For You</h2>
+<div *ngIf="recommendedMovies.length; else noRecs" class="movies-grid">
+  <div *ngFor="let movie of recommendedMovies" class="movie-card">
+    <img [src]="getPoster(movie)" alt="{{ movie.title }}" />
+    <div class="hover-info">
+      <h4>{{ movie.title }}</h4>
+    </div>
+  </div>
+</div>
+<ng-template #noRecs>No recommendations available</ng-template>
 
 <h2>🎬 All Movies ({{ movies.length }})</h2>
 <div *ngIf="movies.length; else noMovies" class="movies-grid">
@@ -62,13 +66,6 @@ interface Movie {
               (click)="rateMovie(movie, star)"
               [style.color]="star <= (movie?.your_rating ?? 0) ? 'gold' : 'gray'">★</span>
       </p>
-
-      <div *ngIf="movie.recommendations?.length" class="recommendations">
-        <h5>Recommended:</h5>
-        <ul>
-          <li *ngFor="let rec of movie.recommendations">{{ rec.title }}</li>
-        </ul>
-      </div>
     </div>
   </div>
 </div>
@@ -90,12 +87,23 @@ export class MoviesComponent implements OnInit {
   movies: Movie[] = [];
   allMovies: Movie[] = [];
   trending: Movie[] = [];
-
+recommendedMovies: any[] = [];
   constructor(private apiService: ApiService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.loadMovies();
     this.loadTrending();
+    
+    this.apiService.getRecommendations().subscribe({
+  next: (data) => {
+    this.recommendedMovies = data as any[];
+    this.cdr.detectChanges();
+  },
+  error: (err) => {
+    console.error('Recommendations failed', err);
+    this.recommendedMovies = [];
+  }
+});
 
     this.searchSubject.pipe(debounceTime(300)).subscribe(query => {
       const q = query?.toLowerCase() || '';
@@ -120,7 +128,6 @@ export class MoviesComponent implements OnInit {
     this.allMovies = moviesArray.map((m: any) => ({
       ...m,
       your_rating: m.your_rating ?? null,
-      recommendations: m.recommendations ?? []
     }));
     this.movies = [...this.allMovies];
     this.cdr.detectChanges();
@@ -136,7 +143,6 @@ loadTrending() {
     this.trending = trendingArray.map((m: any) => ({
       ...m,
       your_rating: m.your_rating ?? null,
-      recommendations: m.recommendations ?? []
     }));
     this.cdr.detectChanges();
   });

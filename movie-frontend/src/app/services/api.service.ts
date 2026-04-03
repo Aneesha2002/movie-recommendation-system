@@ -57,4 +57,13 @@ export class ApiService {
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
     return this.http.post<any>(`${this.baseUrl}/movies/${movieId}/rate/`, { rating }, { headers });
   }
+ getRecommendations(): Observable<any[]> {
+  const headers = this.getAuthHeaders();
+  return this.safeGet(
+    this.http.get<any[]>(
+      `${this.baseUrl}/recommendations/`,
+      headers ? { headers } : {}
+    )
+  );
+}
 }
