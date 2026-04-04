@@ -67,26 +67,23 @@ export class ApiService {
   // --------------------------------------------------
   //  Get all movies
   // --------------------------------------------------
-  getMovies(): Observable<any[]> {
-    return this.http.get<any[]>(
-      `${this.baseUrl}/movies/`,
-      this.getOptions()
-    ).pipe(
-      catchError(this.handleError<any[]>('getMovies'))
-    );
+getMovies(search?: string) {
+  const headers = this.getAuthHeaders() ?? undefined;
+  let url = `${this.baseUrl}/movies/`;
+  if (search) {
+    url += `?search=${encodeURIComponent(search)}`;
   }
+  return this.http.get(url, { headers });
+}
 
   // --------------------------------------------------
   //  Get trending movies
   // --------------------------------------------------
   getTrending(): Observable<any[]> {
-    return this.http.get<any[]>(
-      `${this.baseUrl}/movies/trending/`,
-      this.getOptions()
-    ).pipe(
-      catchError(this.handleError<any[]>('getTrending'))
-    );
-  }
+  // DO NOT attach auth headers for public trending
+  return this.http.get<any[]>(`${this.baseUrl}/movies/trending/`)
+    .pipe(catchError(this.handleError<any[]>('getTrending')));
+}
 
   // --------------------------------------------------
   //  Search movies
@@ -138,12 +135,10 @@ export class ApiService {
   // --------------------------------------------------
   //  Get personalized / fallback recommendations
   // --------------------------------------------------
-  getRecommendations(): Observable<any[]> {
-    return this.http.get<any[]>(
-      `${this.baseUrl}/recommendations/`,
-      this.getOptions()
-    ).pipe(
-      catchError(this.handleError<any[]>('getRecommendations'))
-    );
-  }
+ getRecommendations(): Observable<any[]> {
+  // Do not attach auth headers for public GET
+  return this.http.get<any[]>(`${this.baseUrl}/recommendations/`).pipe(
+    catchError(this.handleError<any[]>('getRecommendations'))
+  );
+}
 }

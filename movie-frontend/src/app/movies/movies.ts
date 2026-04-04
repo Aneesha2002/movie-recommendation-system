@@ -106,31 +106,25 @@ recommendedMovies: any[] = [];
 });
 
     this.searchSubject.pipe(debounceTime(300)).subscribe(query => {
-      const q = query?.toLowerCase() || '';
-      this.movies = q
-        ? this.allMovies.filter(m =>
-            m.title.toLowerCase().includes(q) ||
-            m.description.toLowerCase().includes(q) ||
-            m.genres.some(g => g.name.toLowerCase().includes(q))
-          )
-        : [...this.allMovies];
-      this.cdr.detectChanges();
-    });
+  this.loadMovies(query); // reuse the same function for search
+});
   }
 
- loadMovies() {
-  this.apiService.getMovies().subscribe(data => {
-    // Treat as paginated response if not array
-    const moviesArray = Array.isArray(data)
-      ? data
-      : (data as { results?: any[] }).results ?? [];
-
-    this.allMovies = moviesArray.map((m: any) => ({
-      ...m,
-      your_rating: m.your_rating ?? null,
-    }));
-    this.movies = [...this.allMovies];
-    this.cdr.detectChanges();
+loadMovies(search?: string) {
+  this.apiService.getMovies(search).subscribe({
+    next: (data) => {
+      const moviesArray = Array.isArray(data) ? data : (data as { results?: any[] }).results ?? [];
+      this.allMovies = moviesArray.map((m: any) => ({
+        ...m,
+        your_rating: m.your_rating ?? null,
+      }));
+      this.movies = [...this.allMovies];
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      console.error('Movies load failed', err);
+      this.movies = [];
+    }
   });
 }
 
@@ -148,7 +142,10 @@ loadTrending() {
   });
 }
 
-  onSearch(event: any) { this.searchSubject.next(event.target.value); }
+ onSearch(event: any) {
+  const query = event.target.value;
+  this.searchSubject.next(query);
+}
 
   getPoster(movie: Movie) {
     return movie.poster_url?.trim() || 'https://via.placeholder.com/200x250?text=No+Poster';
