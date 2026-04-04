@@ -1,29 +1,73 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from movies.models import Movie
-from ratings.models import Rating
+from rest_framework.permissions import AllowAny
+
+from movies.models import Movie, Rating
 from django.db.models import Count, Avg
-from rest_framework.permissions import IsAuthenticated
+
 
 class RecommendationView(APIView):
-    permission_classes = [IsAuthenticated]
+    """
+    Public endpoint for movie recommendations.
+
+    Works for:
+    - Logged-in users → personalized recommendations
+    - Anonymous users → fallback (top-rated / popular movies)
+    """
+    permission_classes = [AllowAny]  # Public access
 
     def get(self, request):
-        user = request.user  
+        user = request.user
 
-        # Get user ratings
-        user_ratings = Rating.objects.filter(user=user)
+        # ---------------------------------------
+        # 1. Get user's ratings (if logged in)
+        # ---------------------------------------
+        if user.is_authenticated:
+            user_ratings = Rating.objects.filter(user=user)
+        else:
+            user_ratings = Rating.objects.none()
+
+        # Movies the user liked (rating >= 4)
         liked_movies = user_ratings.filter(value__gte=4)
 
-        # Get genres from liked movies
-        liked_genre_ids = set()
-        for rating in liked_movies:
-            liked_genre_ids.update(g.id for g in rating.movie.genres.all())
+        # ---------------------------------------
+        # 2. Get liked genres (OPTIMIZED)
+        # ---------------------------------------
+        liked_genre_ids = set(
+            Movie.objects.filter(
+                ratings__user=user,
+                ratings__value__gte=4
+            ).values_list('genres__id', flat=True)
+        ) if user.is_authenticated else set()
 
-        # Already rated movies
+        # ---------------------------------------
+        # 3. Fallback for new / anonymous users
+        # ---------------------------------------
+        if not liked_genre_ids:
+            # Return top movies based on popularity + rating
+            fallback_movies = Movie.objects.annotate(
+                avg_rating=Avg('ratings__value'),
+                num_ratings=Count('ratings')
+            ).order_by('-num_ratings', '-avg_rating')[:10]
+
+            return Response([
+                {
+                    "id": m.id,
+                    "title": m.title,
+                    "poster_url": m.poster_url,
+                    "avg_rating": round(m.avg_rating or 0, 2)
+                }
+                for m in fallback_movies
+            ])
+
+        # ---------------------------------------
+        # 4. Exclude already rated movies
+        # ---------------------------------------
         rated_movie_ids = user_ratings.values_list('movie_id', flat=True)
 
-        # Candidate movies
+        # ---------------------------------------
+        # 5. Get candidate movies
+        # ---------------------------------------
         movies = Movie.objects.annotate(
             avg_rating=Avg('ratings__value'),
             num_ratings=Count('ratings')
@@ -33,52 +77,42 @@ class RecommendationView(APIView):
             id__in=rated_movie_ids
         ).distinct().prefetch_related('genres')[:50]
 
-        # Hybrid scoring
+        # ---------------------------------------
+        # 6. Score movies (hybrid recommendation)
+        # ---------------------------------------
         movie_scores = []
+
         for movie in movies:
             movie_genre_ids = {g.id for g in movie.genres.all()}
+
+            # How many genres match user's preferences
             genre_match_count = len(movie_genre_ids & liked_genre_ids)
 
+            # Hybrid score formula
             score = (
-                genre_match_count * 0.5 +
-                (movie.avg_rating or 0) * 0.3 +
-                (movie.num_ratings or 0) * 0.2
+                genre_match_count * 0.5 +          # genre similarity
+                (movie.avg_rating or 0) * 0.3 +    # quality
+                (movie.num_ratings or 0) * 0.2     # popularity
             )
 
             movie_scores.append((score, movie))
 
-        # Top 10
+        # ---------------------------------------
+        # 7. Get top 10 movies
+        # ---------------------------------------
         top_movies = [
             m for s, m in sorted(movie_scores, key=lambda x: x[0], reverse=True)
         ][:10]
 
-        # Response
-        data = [
+        # ---------------------------------------
+        # 8. Final response
+        # ---------------------------------------
+        return Response([
             {
                 "id": m.id,
                 "title": m.title,
-                "poster_url": m.poster_url  # ✅ added for frontend
+                "poster_url": m.poster_url,
+                "avg_rating": round(m.avg_rating or 0, 2)
             }
             for m in top_movies
-        ]
-
-        return Response(data)
-
-class TrendingMoviesView(APIView):
-    def get(self, request):
-        # Top 5 movies with most ratings, then avg_rating
-        movies = Movie.objects.annotate(
-            num_ratings=Count('ratings'),
-            avg_rating=Avg('ratings__value')
-        ).order_by('-num_ratings', '-avg_rating')[:5]
-
-        data = [
-            {
-                "id": movie.id,
-                "title": movie.title,
-                "num_ratings": movie.num_ratings,
-                "avg_rating": round(movie.avg_rating or 0, 2)
-            }
-            for movie in movies
-        ]
-        return Response(data)
+        ])

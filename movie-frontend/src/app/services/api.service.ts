@@ -1,4 +1,3 @@
-// src/app/services/api.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
@@ -9,61 +8,142 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class ApiService {
+
+  //  Base URL of your Django backend
   private baseUrl = 'https://movie-recommendation-system-cef2.onrender.com/api';
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
 
-  /** Helper to include Authorization header if logged in */
+  // --------------------------------------------------
+  //  Get Authorization Header (if user is logged in)
+  // --------------------------------------------------
   private getAuthHeaders(): HttpHeaders | null {
     const token = this.authService.getAccessToken();
-    if (!token) return null;
-    return new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    // If token exists → attach Bearer token
+    if (token) {
+      return new HttpHeaders({
+        Authorization: `Bearer ${token}`
+      });
+    }
+
+    // If not logged in → no headers
+    return null;
   }
 
-  /** Wrap GET requests to return empty array on error */
-  private safeGet<T>(obs: Observable<T>): Observable<T | []> {
-    return obs.pipe(
-      catchError(err => {
-        console.error('API error:', err);
-        return of([] as any);
-      })
+  // --------------------------------------------------
+  //  Unified request options (cleaner usage)
+  // --------------------------------------------------
+  private getOptions() {
+    const headers = this.getAuthHeaders();
+    return headers ? { headers } : {};
+  }
+
+  // --------------------------------------------------
+  //  Error handler for GET requests
+  // DO NOT silently hide errors — log them properly
+  // --------------------------------------------------
+  private handleError<T>(operation: string) {
+    return (error: any): Observable<T> => {
+      console.error(`❌ ${operation} failed:`, error);
+
+      // Optional: Customize based on status
+      if (error.status === 0) {
+        console.error('🌐 Network/CORS issue');
+      } else if (error.status === 401) {
+        console.error('🔐 Unauthorized request');
+      } else if (error.status === 500) {
+        console.error('🔥 Server error');
+      }
+
+      // Return empty fallback so UI doesn't crash
+      return of([] as unknown as T);
+    };
+  }
+
+  // --------------------------------------------------
+  //  Get all movies
+  // --------------------------------------------------
+  getMovies(): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/movies/`,
+      this.getOptions()
+    ).pipe(
+      catchError(this.handleError<any[]>('getMovies'))
     );
   }
 
-  getMovies(): Observable<any[]> {
-    const headers = this.getAuthHeaders();
-    return this.safeGet(this.http.get<any[]>(`${this.baseUrl}/movies/`, headers ? { headers } : {}));
-  }
-
+  // --------------------------------------------------
+  //  Get trending movies
+  // --------------------------------------------------
   getTrending(): Observable<any[]> {
-    const headers = this.getAuthHeaders();
-    return this.safeGet(this.http.get<any[]>(`${this.baseUrl}/movies/trending/`, headers ? { headers } : {}));
+    return this.http.get<any[]>(
+      `${this.baseUrl}/movies/trending/`,
+      this.getOptions()
+    ).pipe(
+      catchError(this.handleError<any[]>('getTrending'))
+    );
   }
 
+  // --------------------------------------------------
+  //  Search movies
+  // --------------------------------------------------
   searchMovies(query: string): Observable<any[]> {
-    const headers = this.getAuthHeaders();
-    return this.safeGet(this.http.get<any[]>(`${this.baseUrl}/movies/?search=${query}`, headers ? { headers } : {}));
+    return this.http.get<any[]>(
+      `${this.baseUrl}/movies/?search=${query}`,
+      this.getOptions()
+    ).pipe(
+      catchError(this.handleError<any[]>('searchMovies'))
+    );
   }
 
+  // --------------------------------------------------
+  //  Get single movie details
+  // --------------------------------------------------
   getMovieById(id: number): Observable<any> {
-    const headers = this.getAuthHeaders();
-    return this.safeGet(this.http.get<any>(`${this.baseUrl}/movies/${id}/`, headers ? { headers } : {}));
+    return this.http.get<any>(
+      `${this.baseUrl}/movies/${id}/`,
+      this.getOptions()
+    ).pipe(
+      catchError(this.handleError<any>('getMovieById'))
+    );
   }
 
+  // --------------------------------------------------
+  //  Rate a movie (requires login)
+  // --------------------------------------------------
   rateMovie(movieId: number, rating: number): Observable<any> {
     const token = this.authService.getAccessToken();
-    if (!token) return of({ error: 'User not logged in' });
 
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
-    return this.http.post<any>(`${this.baseUrl}/movies/${movieId}/rate/`, { rating }, { headers });
+    // If user is not logged in → return error safely
+    if (!token) {
+      console.warn('⚠️ User not logged in');
+      return of({ error: 'User not logged in' });
+    }
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+
+    return this.http.post<any>(
+      `${this.baseUrl}/movies/${movieId}/rate/`,
+      { rating },
+      { headers }
+    );
   }
- getRecommendations(): Observable<any[]> {
-  const headers = this.getAuthHeaders();
-  return this.safeGet(
-    this.http.get<any[]>(
+
+  // --------------------------------------------------
+  //  Get personalized / fallback recommendations
+  // --------------------------------------------------
+  getRecommendations(): Observable<any[]> {
+    return this.http.get<any[]>(
       `${this.baseUrl}/recommendations/`,
-      headers ? { headers } : {}
-    )
-  );
-}
+      this.getOptions()
+    ).pipe(
+      catchError(this.handleError<any[]>('getRecommendations'))
+    );
+  }
 }

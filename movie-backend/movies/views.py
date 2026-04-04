@@ -9,7 +9,6 @@ from django.db.models import Q
 from .models import Movie, Rating
 from .serializers import MovieSerializer
 
-
 # -------------------------------
 # Public: List Movies (with search)
 # -------------------------------
