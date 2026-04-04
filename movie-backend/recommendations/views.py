@@ -41,6 +41,6 @@ class RecommendationView(APIView):
             score = genre_match_count * 0.5 + (movie.avg_rating or 0) * 0.3 + (movie.num_ratings or 0) * 0.2
             movie_scores.append((score, movie))
 
-        top_movies = [m for s, m in sorted(movie_scores, key=lambda x: x[0], reverse=True)][:10]
+        top_movies = [m for s, m in sorted(movie_scores, key=lambda x: x[0], reverse=True)if m.id not in rated_movie_ids][:10]
         serializer = MovieSerializer(top_movies, many=True, context={'request': request})
         return Response(serializer.data)
