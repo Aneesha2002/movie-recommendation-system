@@ -1,4 +1,3 @@
-// src/app/app.ts
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -16,11 +15,13 @@ import { HttpClientModule } from '@angular/common/http';
   ],
   template: `
   <h1>Movie App</h1>
+
   <nav>
-    <a routerLink="/login">Login</a> |
-    <a routerLink="/signup">Signup</a> |
-    <a routerLink="/">Home</a> |
-    
+    <a routerLink="/">Home</a> &nbsp;
+
+    <a *ngIf="!isLoggedIn()" routerLink="/login">Login</a>   &nbsp;
+    <a *ngIf="!isLoggedIn()" routerLink="/signup">Signup</a> &nbsp;
+
     <button *ngIf="isLoggedIn()" (click)="logout()">Logout</button>
   </nav>
 
@@ -29,14 +30,13 @@ import { HttpClientModule } from '@angular/common/http';
 })
 export class App {
 
-   isLoggedIn(): boolean {
+  isLoggedIn(): boolean {
     return !!localStorage.getItem('access_token');
   }
 
   logout() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-    location.reload(); // refresh UI
+    location.reload();
   }
 }
-

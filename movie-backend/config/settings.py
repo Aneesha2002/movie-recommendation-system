@@ -121,7 +121,7 @@ REST_FRAMEWORK = {
 #}
 
 # CORS
-CORS_ALLOW_ALL_ORIGINS = True  # Allow all in dev, restrict in prod
+CORS_ALLOW_ALL_ORIGINS = False  # Allow all in dev, restrict in prod
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
    "https://movie-recommendation-system-aneesha2002s-projects.vercel.app",

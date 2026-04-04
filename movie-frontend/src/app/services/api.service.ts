@@ -67,16 +67,6 @@ export class ApiService {
   // --------------------------------------------------
   //  Get all movies
   // --------------------------------------------------
-  /*getMovies(search?: string): Observable<any[]> {
-  let url = `${this.baseUrl}/movies/`;
-  if (search) {
-    url += `?search=${encodeURIComponent(search)}`;
-  }
-
-  return this.http.get<any[]>(url).pipe(
-    catchError(this.handleError<any[]>('getMovies'))
-  );
-  } */
  getMovies(search?: string): Observable<any[]> {
   let url = `${this.baseUrl}/movies/`;
   if (search) {
