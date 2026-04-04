@@ -48,15 +48,15 @@ export class ApiService {
   // --------------------------------------------------
   private handleError<T>(operation: string) {
     return (error: any): Observable<T> => {
-      console.error(`❌ ${operation} failed:`, error);
+      console.error(` ${operation} failed:`, error);
 
       // Optional: Customize based on status
       if (error.status === 0) {
-        console.error('🌐 Network/CORS issue');
+        console.error(' Network/CORS issue');
       } else if (error.status === 401) {
-        console.error('🔐 Unauthorized request');
+        console.error(' Unauthorized request');
       } else if (error.status === 500) {
-        console.error('🔥 Server error');
+        console.error(' Server error');
       }
 
       // Return empty fallback so UI doesn't crash
@@ -67,13 +67,25 @@ export class ApiService {
   // --------------------------------------------------
   //  Get all movies
   // --------------------------------------------------
-getMovies(search?: string) {
-  const headers = this.getAuthHeaders() ?? undefined;
+  /*getMovies(search?: string): Observable<any[]> {
   let url = `${this.baseUrl}/movies/`;
   if (search) {
     url += `?search=${encodeURIComponent(search)}`;
   }
-  return this.http.get(url, { headers });
+
+  return this.http.get<any[]>(url).pipe(
+    catchError(this.handleError<any[]>('getMovies'))
+  );
+  } */
+ getMovies(search?: string): Observable<any[]> {
+  let url = `${this.baseUrl}/movies/`;
+  if (search) {
+    url += `?search=${encodeURIComponent(search)}`;
+  }
+
+  return this.http.get<any[]>(url, this.getOptions()).pipe(
+    catchError(this.handleError<any[]>('getMovies'))
+  );
 }
 
   // --------------------------------------------------
@@ -89,12 +101,11 @@ getMovies(search?: string) {
   //  Search movies
   // --------------------------------------------------
   searchMovies(query: string): Observable<any[]> {
-    return this.http.get<any[]>(
-      `${this.baseUrl}/movies/?search=${query}`,
-      this.getOptions()
-    ).pipe(
-      catchError(this.handleError<any[]>('searchMovies'))
-    );
+  const url = `${this.baseUrl}/movies/?search=${encodeURIComponent(query)}`;
+
+  return this.http.get<any[]>(url).pipe(
+    catchError(this.handleError<any[]>('searchMovies'))
+  );
   }
 
   // --------------------------------------------------
@@ -113,23 +124,14 @@ getMovies(search?: string) {
   //  Rate a movie (requires login)
   // --------------------------------------------------
   rateMovie(movieId: number, rating: number): Observable<any> {
-    const token = this.authService.getAccessToken();
+  const token = this.authService.getAccessToken();
+  const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
 
-    // If user is not logged in → return error safely
-    if (!token) {
-      console.warn('⚠️ User not logged in');
-      return of({ error: 'User not logged in' });
-    }
-
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-
-    return this.http.post<any>(
-      `${this.baseUrl}/movies/${movieId}/rate/`,
-      { rating },
-      { headers }
-    );
+  return this.http.post<any>(
+    `${this.baseUrl}/movies/${movieId}/rate/`,
+    { rating },
+    { headers }
+  );
   }
 
   // --------------------------------------------------

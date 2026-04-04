@@ -24,7 +24,7 @@ interface Movie {
   template: `
 <input type="text" placeholder="Search movies..." (input)="onSearch($event)" class="search-box" />
 
-<h2>🔥 Trending</h2>
+<h2>Trending</h2>
 <div *ngIf="trending.length; else noTrending" class="trending-container">
   <div *ngFor="let movie of trending" class="movie-card">
     <img [src]="getPoster(movie)" alt="{{ movie.title }}" />
@@ -39,18 +39,22 @@ interface Movie {
 </div>
 <ng-template #noTrending>No trending movies available</ng-template>
 
-<h2>🎯 Recommended For You</h2>
-<div *ngIf="recommendedMovies.length; else noRecs" class="movies-grid">
+<h2>Recommended For You</h2>
+<div *ngIf="recommendedMovies.length; else noRecs" class="trending-container">
   <div *ngFor="let movie of recommendedMovies" class="movie-card">
     <img [src]="getPoster(movie)" alt="{{ movie.title }}" />
     <div class="hover-info">
       <h4>{{ movie.title }}</h4>
+      <p>{{ movie.description }}</p>
+      <p>Year: {{ movie.release_year }}</p>
+      <p>Genres: {{ movie.genres.map(g => g.name).join(', ') }}</p>
+      <p>Average Rating: {{ movie.avg_rating || "No ratings yet" }}</p>
     </div>
   </div>
 </div>
 <ng-template #noRecs>No recommendations available</ng-template>
 
-<h2>🎬 All Movies ({{ movies.length }})</h2>
+<h2>All Movies ({{ movies.length }})</h2>
 <div *ngIf="movies.length; else noMovies" class="movies-grid">
   <div *ngFor="let movie of movies; trackBy: trackById" class="movie-card">
     <img [src]="getPoster(movie)" alt="{{ movie.title }}" />
@@ -61,11 +65,15 @@ interface Movie {
       <p>Genres: {{ movie.genres.map(g => g.name).join(', ') }}</p>
       <p>Average Rating: {{ movie.avg_rating || "No ratings yet" }}</p>
       <p>
-        Your Rating:
-        <span *ngFor="let star of [1,2,3,4,5]"
-              (click)="rateMovie(movie, star)"
-              [style.color]="star <= (movie?.your_rating ?? 0) ? 'gold' : 'gray'">★</span>
-      </p>
+         Your Rating:
+      <span *ngFor="let star of [1,2,3,4,5]"
+        (click)="rateMovie(movie, star)"
+        [style.color]="star <= (movie?.your_rating ?? 0) ? 'gold' : 'gray'"
+        [style.cursor]="isLoggedIn() ? 'pointer' : 'not-allowed'"
+        [title]="isLoggedIn() ? 'Rate this movie' : 'Login to rate'">
+      ★
+    </span>
+    </p>
     </div>
   </div>
 </div>
@@ -141,6 +149,9 @@ loadTrending() {
     this.cdr.detectChanges();
   });
 }
+isLoggedIn(): boolean {
+  return !!localStorage.getItem('access_token');
+}
 
  onSearch(event: any) {
   const query = event.target.value;
@@ -154,17 +165,25 @@ loadTrending() {
   trackById(index: number, movie: Movie) { return movie.id; }
 
   rateMovie(movie: Movie, value: number) {
-    this.apiService.rateMovie(movie.id, value).subscribe({
-      next: (res: any) => {
-        if (!res.error) {
-          movie.avg_rating = res.avg_rating;
-          movie.your_rating = value;
-        }
-      },
-      error: (err) => {
-        console.error('Rating failed', err);
-        alert('Failed to submit rating. Are you logged in?');
-      }
-    });
+  if (!this.isLoggedIn()) {
+    alert('⚠️ You must be logged in to rate movies.');
+    return;
   }
+
+  this.apiService.rateMovie(movie.id, value).subscribe({
+    next: (res: any) => {
+      movie.avg_rating = res.avg_rating;
+      movie.your_rating = value;
+    },
+    error: (err) => {
+      if (err.status === 401) {
+        alert(' You must be logged in to rate movies.');
+      } else {
+        console.error('Rating failed', err);
+        alert('Failed to submit rating.');
+      }
+    }
+  });
+}
+
 }

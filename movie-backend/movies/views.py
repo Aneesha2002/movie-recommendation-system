@@ -46,7 +46,7 @@ class MovieDetailView(generics.RetrieveAPIView):
     permission_classes = [AllowAny]
 
 
-@method_decorator(cache_page(60 * 10), name='dispatch')
+@method_decorator(cache_page(60 * 1), name='dispatch')
 class TrendingMoviesView(APIView):
     permission_classes = [AllowAny]
 
