@@ -11,8 +11,7 @@ class RecommendationView(APIView):
     def get(self, request):
         user = request.user
         user_ratings = Rating.objects.filter(user=user) if user.is_authenticated else Rating.objects.none()
-        liked_genre_ids = set(
-            Movie.objects.filter(ratings__user=user, ratings__value__gte=4).values_list('genres__id', flat=True)
+        liked_genre_ids = set(Rating.objects.filter(user=user, value__gte=4).values_list('movie__genres__id', flat=True)
         ) if user.is_authenticated else set()
 
         if not liked_genre_ids:
@@ -29,9 +28,10 @@ class RecommendationView(APIView):
         num_ratings=Count('ratings')
         ).filter(
         genres__id__in=liked_genre_ids
-        ).distinct().exclude(
-        id__in=list(rated_movie_ids)
-        ).prefetch_related('genres')[:50]
+        ).exclude(
+        id__in=rated_movie_ids
+        ).distinct().prefetch_related('genres')
+        movies = [m for m in movies if m.id not in rated_movie_ids]
 
         # Score movies by hybrid method
         movie_scores = []
@@ -41,6 +41,6 @@ class RecommendationView(APIView):
             score = genre_match_count * 0.5 + (movie.avg_rating or 0) * 0.3 + (movie.num_ratings or 0) * 0.2
             movie_scores.append((score, movie))
 
-        top_movies = [m for s, m in sorted(movie_scores, key=lambda x: x[0], reverse=True)if m.id not in rated_movie_ids][:10]
+        top_movies = [m for s, m in sorted(movie_scores, key=lambda x: x[0], reverse=True)][:10]
         serializer = MovieSerializer(top_movies, many=True, context={'request': request})
         return Response(serializer.data)
