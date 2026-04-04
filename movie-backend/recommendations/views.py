@@ -23,14 +23,14 @@ class RecommendationView(APIView):
             serializer = MovieSerializer(fallback_movies, many=True, context={'request': request})
             return Response(serializer.data)
 
-        rated_movie_ids = user_ratings.values_list('movie_id', flat=True)
-        movies = Movie.objects.annotate(
-            avg_rating=Avg('ratings__value'),
-            num_ratings=Count('ratings')
+        rated_movie_ids = list(user_ratings.values_list('movie_id', flat=True))
+        movies = Movie.objects.exclude(
+        id__in=rated_movie_ids
+        ).annotate(
+        avg_rating=Avg('ratings__value'),
+        num_ratings=Count('ratings')
         ).filter(
-            genres__id__in=liked_genre_ids
-        ).exclude(
-            id__in=rated_movie_ids
+        genres__id__in=liked_genre_ids
         ).distinct().prefetch_related('genres')[:50]
 
         # Score movies by hybrid method
