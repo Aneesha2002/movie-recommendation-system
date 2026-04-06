@@ -1,111 +1,143 @@
 # 🎬 Movie Recommendation System
 
-A full-stack movie recommendation system built with Django REST Framework (backend) and Angular (frontend).  
-Users can browse movies, search, view trending content, rate movies, and receive personalized recommendations.
+A full-stack movie recommendation app built with **Django REST Framework** (backend) and **Angular** (frontend).
+
+Users can browse movies, search, rate them, and get personalized recommendations based on their preferences.
 
 ---
 
-## 🌐 Live Demo
+## Live Demo
 
-- Frontend (Vercel): https://movie-recommendation-system-git-main-aneesha2002s-projects.vercel.app  
-- Backend API (Render): https://movie-recommendation-system-cef2.onrender.com/api  
+* Frontend: https://movie-recommendation-system-git-main-aneesha2002s-projects.vercel.app
+* Backend API: https://movie-recommendation-system-cef2.onrender.com/api
 
-⚠️ Note: Backend may take 30–60 seconds to respond initially due to cold start on free-tier hosting.
-
----
-
-## 🚀 Features
-
-### Backend (Django + DRF)
-- RESTful APIs for movies, search, ratings, and trending features  
-- PostgreSQL database schema for movies, genres, and user ratings  
-- JWT-based authentication (signup, login) for protected actions  
-- Public access to movie browsing and trending endpoints  
-- Personalized recommendation system based on:
-  - User’s highly rated genres  
-  - Movie average rating  
-  - Number of ratings (popularity)  
-- Fallback recommendations for new/anonymous users (top-rated + most-rated movies)  
-- Integration with TMDb API for movie posters  
+⚠️ Note: Backend is hosted on a free tier (Render), so the first request may take ~30–60 seconds.
 
 ---
 
-### Frontend (Angular)
-- Browse all movies without login  
-- Search movies by title, description, or genre  
-- View trending movies  
-- Rate movies (only when logged in)  
-- Display user’s rating (highlighted stars) after login  
-- Personalized recommendations section  
-- Conditional UI (login/signup vs logout based on auth state)  
+## Features
+
+### Backend
+
+* REST APIs for movies, search, ratings, and recommendations
+* JWT authentication (login/signup)
+* Public endpoints for browsing and trending
+* PostgreSQL database (movies, genres, ratings)
+
+### Recommendation System
+
+* Uses a simple hybrid approach:
+
+  * Genres from movies the user rated highly
+  * Average rating of movies
+  * Number of ratings (popularity)
+* Fallback for new users → top rated / most rated movies
+* Already rated movies are excluded
+
+### Frontend
+
+* Browse movies without login
+* Search movies (debounced input)
+* View trending movies
+* Rate movies (only when logged in)
+* See your rating instantly reflected
+* Personalized recommendations section
+* Basic auth-aware UI (login/logout)
 
 ---
 
-## 🛠 Tech Stack
+## Some Design Choices
 
-**Backend:**  
-- Python 3.10  
-- Django 5  
-- Django REST Framework  
-- PostgreSQL  
-
-**Frontend:**  
-- Angular (standalone components)  
-
-**Auth & Tools:**  
-- JWT (djangorestframework-simplejwt)  
-- TMDb API  
-- python-dotenv  
-
-**Deployment:**  
-- Backend: Render  
-- Frontend: Vercel  
+* Kept backend split into separate apps (`movies`, `users`, `recommendations`) for clarity
+* Used Django ORM aggregations (`Avg`, `Count`) instead of raw SQL
+* Added caching for trending endpoint to reduce repeated DB queries
+* Used `update_or_create` for ratings to avoid duplicates
+* Debounced search on frontend to reduce unnecessary API calls
+* Recommendation logic kept simple and readable instead of overcomplicating with ML
 
 ---
 
-## ⚙️ Installation
+## Performance Notes
 
-### 1. Clone Repository
+* Trending endpoint is cached
+* Search input is debounced (300ms)
+* Avoids recommending already rated movies
+* Queries use aggregation instead of looping in Python
+
+---
+
+## Tech Stack
+
+**Backend**
+
+* Python, Django, Django REST Framework
+* PostgreSQL
+
+**Frontend**
+
+* Angular
+* RxJS
+
+**Auth & APIs**
+
+* JWT (simplejwt)
+* TMDb API (for posters)
+
+**Deployment**
+
+* Backend: Render
+* Frontend: Vercel
+
+---
+
+## API Endpoints
+
+### Movies
+
+* `GET /api/movies/` → list movies
+* `GET /api/movies/?search=query` → search
+* `GET /api/movies/<id>/` → details
+* `GET /api/movies/trending/` → trending
+* `POST /api/movies/<id>/rate/` → rate (auth required)
+
+### Recommendations
+
+* `GET /api/recommendations/`
+
+### Users
+
+* `POST /api/users/signup/`
+* `POST /api/users/login/`
+
+---
+
+## Local Setup
+
+### Backend
 
 ```bash
-git clone <your-repo-url>
+git clone <repo-url>
 cd movie-recommendation-system
-```
 
----
-
-### 2. Backend Setup
-
-Create `.env` file:
-
-```env
-TMDB_API_KEY=your_tmdb_api_key
-SECRET_KEY=your_django_secret_key
+# create .env
+TMDB_API_KEY=your_key
+SECRET_KEY=your_secret
 DEBUG=True
-```
 
-Run backend:
-
-```bash
 python manage.py migrate
 python manage.py runserver
 ```
 
-(Optional) Load data:
+(Optional)
 
 ```bash
 python manage.py import_movies
 python manage.py populate_posters
 ```
 
-Backend API:
-```
-http://localhost:8000/api/
-```
-
 ---
 
-### 3. Frontend Setup
+### Frontend
 
 ```bash
 cd movie_frontend
@@ -113,59 +145,26 @@ npm install
 ng serve
 ```
 
-Frontend:
-```
-http://localhost:4200/
-```
+---
 
-⚠️ Make sure backend URL in `api.service.ts` is correct.
+## Future Improvements
+
+* Move recommendation logic to background jobs (Celery)
+* Add Redis caching for recommendations
+* Improve recommendation quality (collaborative filtering)
+* Add tests
+* Better UI/UX
 
 ---
 
-## 📡 API Endpoints
+## Summary
 
-### Movies
-- GET `/api/movies/` → List movies (public)  
-- GET `/api/movies/?search=query` → Search movies  
-- GET `/api/movies/<id>/` → Movie details  
-- GET `/api/movies/trending/` → Trending movies  
-- POST `/api/movies/<movie_id>/rate/` → Rate movie (JWT required)  
+This project mainly focuses on:
 
-### Recommendations
-- GET `/api/recommendations/` → Personalized or fallback recommendations  
-
-### Users
-- POST `/api/users/signup/` → Register  
-- POST `/api/users/login/` → Login  
+* building REST APIs with Django
+* handling relational data (movies, genres, ratings)
+* implementing a simple recommendation system
+* integrating frontend with backend
+* deploying a full-stack app
 
 ---
-
-## ⚠️ Demo Notes
-
-- Movies and trending are accessible without login  
-- Rating requires authentication  
-- Recommendations:
-  - Logged-in users → personalized  
-  - Not logged-in → fallback popular movies  
-- Backend may be slow on first request due to free hosting  
-
----
-
-## 🔮 Future Improvements
-
-- Stronger recommendation system (collaborative filtering)  
-- Pagination UI on frontend  
-- Add unit & integration tests  
-- Improve UI/UX and loading states  
-- Production deployment with Nginx + Gunicorn  
-
----
-
-## 📌 Summary
-
-This project demonstrates:
-- Backend API design using Django REST Framework  
-- Authentication using JWT  
-- Database modeling with relational data (movies, genres, ratings)  
-- Recommendation system design (hybrid logic)  
-- Full-stack integration and deployment  
