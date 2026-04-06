@@ -127,10 +127,10 @@ export class ApiService {
   // --------------------------------------------------
   //  Get personalized / fallback recommendations
   // --------------------------------------------------
- getRecommendations(): Observable<any[]> {
-  // Do not attach auth headers for public GET
-  return this.http.get<any[]>(`${this.baseUrl}/recommendations/`).pipe(
-    catchError(this.handleError<any[]>('getRecommendations'))
+getRecommendations(): Observable<any[]> {
+  return this.http.get<any[]>(
+    `${this.baseUrl}/recommendations/`,
+    this.getOptions()
   );
 }
 }
