@@ -127,10 +127,11 @@ export class ApiService {
   // --------------------------------------------------
   //  Get personalized / fallback recommendations
   // --------------------------------------------------
-getRecommendations(): Observable<any[]> {
-  return this.http.get<any[]>(
-    `${this.baseUrl}/recommendations/`,
-    this.getOptions()
-  );
+  getRecommendations(): Observable<any[]> {
+  const token = localStorage.getItem('access_token');
+
+  return this.http.get<any[]>(`${this.baseUrl}/recommendations/`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {}
+  });
 }
 }

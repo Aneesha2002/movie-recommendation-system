@@ -16,6 +16,16 @@ class RecommendationView(APIView):
         # Get all movie IDs rated by the current user
         # This ensures we NEVER recommend already rated movies
         # --------------------------------------------------
+
+        print("USER:", request.user)
+        print("AUTH:", request.user.is_authenticated)
+        if request.user.is_authenticated:
+            rated_ids_debug = list(
+        Rating.objects.filter(user=request.user).values_list('movie_id', flat=True))
+        else:
+            rated_ids_debug = []
+
+        print("RATED IDS:", rated_ids_debug)
         if user.is_authenticated:
             rated_movie_ids = list(
                 Rating.objects.filter(user=user)
